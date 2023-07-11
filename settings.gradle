@@ -1,0 +1,3 @@
+rootProject.name = 'bazaar'
+include('bazaar-api')
+include('bazaar-core')

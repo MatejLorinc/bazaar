@@ -1,0 +1,3 @@
+plugins {
+    id 'me.math3w.bazaar-conventions'
+}
