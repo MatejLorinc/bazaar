@@ -3,6 +3,7 @@ package me.math3w.bazaar.menu;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.bazaar.BazaarImpl;
+import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
 
@@ -26,7 +27,7 @@ public class BazaarMenu {
                                             .click(element -> {
                                                 getMenu(category).open(player);
                                             })
-                                            .item(category.getIcon())
+                                            .item(category.equals(selectedCategory) ? Utils.getGlowedItem(category.getIcon()) : category.getIcon())
                                             .build());
                                 }
                             })
