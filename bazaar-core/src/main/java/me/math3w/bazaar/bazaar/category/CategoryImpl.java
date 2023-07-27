@@ -6,6 +6,7 @@ import me.math3w.bazaar.api.bazaar.ProductCategory;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryImpl;
 import me.math3w.bazaar.utils.Utils;
+import me.zort.containr.GUI;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -49,6 +50,11 @@ public class CategoryImpl implements Category {
     @Override
     public List<ProductCategory> getProductCategories() {
         return productCategories;
+    }
+
+    @Override
+    public GUI getMenu() {
+        return config.getMenuConfig().getMenu(this);
     }
 
     @Override

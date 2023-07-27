@@ -1,5 +1,6 @@
 package me.math3w.bazaar.api.bazaar;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -7,7 +8,11 @@ import java.util.List;
 public interface Bazaar {
     void open(Player player);
 
+    void open(Player player, Category category);
+
     List<Category> getCategories();
 
     void saveConfig();
+
+    BazaarAPI getBazaarApi();
 }

@@ -2,6 +2,7 @@ package me.math3w.bazaar;
 
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
+import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
 import me.math3w.bazaar.bazaar.product.ProductConfiguration;
@@ -10,6 +11,9 @@ import me.math3w.bazaar.commands.BazaarCommand;
 import me.math3w.bazaar.commands.EditCommand;
 import me.math3w.bazaar.config.BazaarConfig;
 import me.math3w.bazaar.config.MessagesConfig;
+import me.math3w.bazaar.menu.CategoryMenuConfiguration;
+import me.math3w.bazaar.menu.ConfigurableMenuItem;
+import me.math3w.bazaar.menu.DefaultClickActionManager;
 import me.zort.containr.Containr;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,12 +22,15 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     private MessagesConfig messagesConfig;
     private BazaarConfig bazaarConfig;
     private Bazaar bazaar;
+    private ClickActionManager clickActionManager;
 
     @Override
     public void onLoad() {
         ConfigurationSerialization.registerClass(ProductConfiguration.class);
         ConfigurationSerialization.registerClass(ProductCategoryConfiguration.class);
         ConfigurationSerialization.registerClass(CategoryConfiguration.class);
+        ConfigurationSerialization.registerClass(ConfigurableMenuItem.class);
+        ConfigurationSerialization.registerClass(CategoryMenuConfiguration.class);
     }
 
     @Override
@@ -37,6 +44,8 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         getCommand("bazaaredit").setExecutor(new EditCommand());
 
         bazaar = new BazaarImpl(this);
+
+        clickActionManager = new DefaultClickActionManager(this);
     }
 
     public MessagesConfig getMessagesConfig() {
@@ -50,5 +59,10 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     @Override
     public Bazaar getBazaar() {
         return bazaar;
+    }
+
+    @Override
+    public ClickActionManager getClickActionManager() {
+        return clickActionManager;
     }
 }
