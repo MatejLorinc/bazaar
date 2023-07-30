@@ -1,5 +1,6 @@
 package me.math3w.bazaar.config;
 
+import me.math3w.bazaar.api.config.MessagePlaceholder;
 import me.math3w.bazaar.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

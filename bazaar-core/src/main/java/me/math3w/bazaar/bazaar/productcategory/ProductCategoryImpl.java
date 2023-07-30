@@ -3,8 +3,10 @@ package me.math3w.bazaar.bazaar.productcategory;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
+import me.math3w.bazaar.api.config.MessagePlaceholder;
 import me.math3w.bazaar.bazaar.product.ProductImpl;
 import me.math3w.bazaar.utils.Utils;
+import me.zort.containr.GUI;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -25,7 +27,9 @@ public class ProductCategoryImpl implements ProductCategory {
 
     @Override
     public ItemStack getIcon() {
-        return config.getIcon();
+        return category.getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(config.getIcon(),
+                "productcategory-lore",
+                new MessagePlaceholder("products", String.valueOf(products.size())));
     }
 
     @Override
@@ -48,6 +52,11 @@ public class ProductCategoryImpl implements ProductCategory {
     @Override
     public List<Product> getProducts() {
         return products;
+    }
+
+    @Override
+    public GUI getMenu() {
+        return config.getMenuConfig().getMenu(this);
     }
 
     @Override

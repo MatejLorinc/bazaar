@@ -1,7 +1,7 @@
 package me.math3w.bazaar.bazaar.category;
 
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
-import me.math3w.bazaar.menu.CategoryMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 

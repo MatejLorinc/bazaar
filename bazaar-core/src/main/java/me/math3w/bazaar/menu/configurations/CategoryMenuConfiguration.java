@@ -1,9 +1,11 @@
-package me.math3w.bazaar.menu;
+package me.math3w.bazaar.menu.configurations;
 
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
 import me.math3w.bazaar.api.menu.ClickActionManager;
+import me.math3w.bazaar.menu.ConfigurableMenuItem;
+import me.math3w.bazaar.menu.MenuConfiguration;
 import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
@@ -77,14 +79,6 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                 (List<ConfigurableMenuItem>) args.get("items"));
     }
 
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> args = super.serialize();
-
-
-        return args;
-    }
-
     public GUI getMenu(Category selectedCategory) {
         ClickActionManager clickActionManager = selectedCategory.getBazaar().getBazaarApi().getClickActionManager();
 
@@ -112,9 +106,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                     .init(container -> {
                         for (ProductCategory productCategory : selectedCategory.getProductCategories()) {
                             container.appendElement(Component.element()
-                                    .click(element -> {
-                                        //TODO Open product category menu
-                                    })
+                                    .click(element -> productCategory.getMenu().open(element.getPlayer()))
                                     .item(productCategory.getIcon())
                                     .build());
                         }

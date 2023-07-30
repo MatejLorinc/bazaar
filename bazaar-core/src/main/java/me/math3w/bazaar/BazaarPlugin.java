@@ -2,6 +2,7 @@ package me.math3w.bazaar;
 
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
+import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
@@ -10,10 +11,12 @@ import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
 import me.math3w.bazaar.commands.BazaarCommand;
 import me.math3w.bazaar.commands.EditCommand;
 import me.math3w.bazaar.config.BazaarConfig;
+import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
-import me.math3w.bazaar.menu.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.DefaultClickActionManager;
+import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
 import me.zort.containr.Containr;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     private MessagesConfig messagesConfig;
     private BazaarConfig bazaarConfig;
+    private MenuConfig menuConfig;
     private Bazaar bazaar;
     private ClickActionManager clickActionManager;
 
@@ -31,6 +35,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         ConfigurationSerialization.registerClass(CategoryConfiguration.class);
         ConfigurationSerialization.registerClass(ConfigurableMenuItem.class);
         ConfigurationSerialization.registerClass(CategoryMenuConfiguration.class);
+        ConfigurationSerialization.registerClass(ProductCategoryMenuConfiguration.class);
     }
 
     @Override
@@ -39,6 +44,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
 
         messagesConfig = new MessagesConfig(this);
         bazaarConfig = new BazaarConfig(this);
+        menuConfig = new DefaultMenuConfig(this);
 
         getCommand("bazaar").setExecutor(new BazaarCommand(this));
         getCommand("bazaaredit").setExecutor(new EditCommand());
@@ -54,6 +60,11 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
 
     public BazaarConfig getBazaarConfig() {
         return bazaarConfig;
+    }
+
+    @Override
+    public MenuConfig getMenuConfig() {
+        return menuConfig;
     }
 
     @Override

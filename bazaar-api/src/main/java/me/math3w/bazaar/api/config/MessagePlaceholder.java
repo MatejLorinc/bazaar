@@ -1,4 +1,4 @@
-package me.math3w.bazaar.config;
+package me.math3w.bazaar.api.config;
 
 public final class MessagePlaceholder {
     private final String placeholder;

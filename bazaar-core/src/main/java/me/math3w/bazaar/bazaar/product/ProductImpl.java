@@ -2,6 +2,7 @@ package me.math3w.bazaar.bazaar.product;
 
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
+import me.math3w.bazaar.api.config.MessagePlaceholder;
 import me.math3w.bazaar.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +17,11 @@ public class ProductImpl implements Product {
 
     @Override
     public ItemStack getIcon() {
-        return config.getIcon();
+        //TODO Prices
+        return productCategory.getCategory().getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(config.getIcon(),
+                "product-lore",
+                new MessagePlaceholder("buy-price", "0"),
+                new MessagePlaceholder("sell-price", "0"));
     }
 
     @Override

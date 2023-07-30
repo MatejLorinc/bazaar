@@ -1,5 +1,6 @@
 package me.math3w.bazaar.api.bazaar;
 
+import me.zort.containr.GUI;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public interface ProductCategory {
     void setName(String name);
 
     List<Product> getProducts();
+    
+    GUI getMenu();
 
     Category getCategory();
 }
