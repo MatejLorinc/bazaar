@@ -16,6 +16,7 @@ public class DefaultClickActionManager implements ClickActionManager {
         this.bazaarPlugin = bazaarPlugin;
 
         addClickAction("close", ContextClickInfo::close);
+        addClickAction("back", clickInfo -> bazaarPlugin.getMenuHistory().openPrevious(clickInfo.getPlayer()));
     }
 
     @Override

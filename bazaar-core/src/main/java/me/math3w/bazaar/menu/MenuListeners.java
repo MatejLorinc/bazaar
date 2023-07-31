@@ -10,13 +10,42 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Optional;
 
 public class MenuListeners implements Listener {
     private final BazaarPlugin plugin;
 
     public MenuListeners(BazaarPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onGuiOpen(InventoryOpenEvent event) {
+        Player player = (Player) event.getPlayer();
+        String playerName = player.getName();
+
+        if (!GUIRepository.OPENED_GUIS.containsKey(playerName)) return;
+
+        GUI gui = GUIRepository.OPENED_GUIS.get(playerName);
+
+        plugin.getMenuHistory().addGui(player, gui);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+
+        if (event.getInventory().equals(Optional.ofNullable(GUIRepository.OPENED_GUIS.get(event.getPlayer().getName())).map(GUI::getInventory).orElse(null))) {
+            GUIRepository.remove(event.getPlayer().getName());
+        }
+
+        if (GUIRepository.OPENED_GUIS.containsKey(player.getName())) return;
+
+        plugin.getMenuHistory().clearHistory(player);
     }
 
     /*

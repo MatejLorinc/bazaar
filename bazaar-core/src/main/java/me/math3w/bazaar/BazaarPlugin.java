@@ -4,6 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.menu.ClickActionManager;
+import me.math3w.bazaar.api.menu.MenuHistory;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
 import me.math3w.bazaar.bazaar.product.ProductConfiguration;
@@ -15,6 +16,7 @@ import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.DefaultClickActionManager;
+import me.math3w.bazaar.menu.DefaultMenuHistory;
 import me.math3w.bazaar.menu.MenuListeners;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
@@ -29,6 +31,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     private MenuConfig menuConfig;
     private Bazaar bazaar;
     private ClickActionManager clickActionManager;
+    private MenuHistory menuHistory;
 
     @Override
     public void onLoad() {
@@ -55,6 +58,8 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
 
         clickActionManager = new DefaultClickActionManager(this);
 
+        menuHistory = new DefaultMenuHistory();
+
         Bukkit.getPluginManager().registerEvents(new MenuListeners(this), this);
     }
 
@@ -79,5 +84,9 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     @Override
     public ClickActionManager getClickActionManager() {
         return clickActionManager;
+    }
+
+    public MenuHistory getMenuHistory() {
+        return menuHistory;
     }
 }
