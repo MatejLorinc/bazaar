@@ -15,9 +15,7 @@ public class DefaultClickActionManager implements ClickActionManager {
     public DefaultClickActionManager(BazaarPlugin bazaarPlugin) {
         this.bazaarPlugin = bazaarPlugin;
 
-        addClickAction("", clickInfo -> {
-
-        });
+        addClickAction("close", ContextClickInfo::close);
     }
 
     @Override
