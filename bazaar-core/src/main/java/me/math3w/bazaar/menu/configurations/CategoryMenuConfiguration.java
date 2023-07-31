@@ -2,6 +2,7 @@ package me.math3w.bazaar.menu.configurations;
 
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
+import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
@@ -140,6 +141,18 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                     .size(6, 4)
                     .init(container -> {
                         for (ProductCategory productCategory : selectedCategory.getProductCategories()) {
+                            List<Product> products = productCategory.getProducts();
+                            if (products.size() == 1) {
+                                Product product = products.get(0);
+                                container.appendElement(Component.element()
+                                        .click(element -> {
+                                            //TODO Open product menu
+                                        })
+                                        .item(product.getIcon())
+                                        .build());
+                                continue;
+                            }
+
                             container.appendElement(Component.element()
                                     .click(element -> productCategory.getMenu().open(element.getPlayer()))
                                     .item(productCategory.getIcon())
