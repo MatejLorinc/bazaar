@@ -15,9 +15,11 @@ import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.DefaultClickActionManager;
+import me.math3w.bazaar.menu.MenuListeners;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
 import me.zort.containr.Containr;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -52,6 +54,8 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         bazaar = new BazaarImpl(this);
 
         clickActionManager = new DefaultClickActionManager(this);
+
+        Bukkit.getPluginManager().registerEvents(new MenuListeners(this), this);
     }
 
     public MessagesConfig getMessagesConfig() {
