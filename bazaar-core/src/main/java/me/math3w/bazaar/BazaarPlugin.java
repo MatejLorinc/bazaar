@@ -20,6 +20,7 @@ import me.math3w.bazaar.menu.DefaultMenuHistory;
 import me.math3w.bazaar.menu.MenuListeners;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
 import me.zort.containr.Containr;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -41,6 +42,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         ConfigurationSerialization.registerClass(ConfigurableMenuItem.class);
         ConfigurationSerialization.registerClass(CategoryMenuConfiguration.class);
         ConfigurationSerialization.registerClass(ProductCategoryMenuConfiguration.class);
+        ConfigurationSerialization.registerClass(SearchMenuConfiguration.class);
     }
 
     @Override

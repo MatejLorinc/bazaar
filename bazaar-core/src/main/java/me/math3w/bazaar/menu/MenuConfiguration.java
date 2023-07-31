@@ -36,6 +36,18 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
                 .rows(rows);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public List<ConfigurableMenuItem> getItems() {
+        return items;
+    }
+
     protected void loadItems(ContainerComponent containerComponent, ClickActionManager clickActionManager) {
         for (ConfigurableMenuItem item : items) {
             item.setItem(containerComponent, clickActionManager);

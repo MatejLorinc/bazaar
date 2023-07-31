@@ -10,6 +10,8 @@ public interface Bazaar {
 
     void open(Player player, Category category);
 
+    void openSearch(Player player, String filter);
+
     List<Category> getCategories();
 
     void saveConfig();

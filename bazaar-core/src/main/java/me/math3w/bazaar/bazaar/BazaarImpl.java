@@ -32,6 +32,11 @@ public class BazaarImpl implements Bazaar {
     }
 
     @Override
+    public void openSearch(Player player, String filter) {
+        bazaarPlugin.getBazaarConfig().getSearchMenuConfiguration().getMenu(this, filter).open(player);
+    }
+
+    @Override
     public List<Category> getCategories() {
         return categories;
     }

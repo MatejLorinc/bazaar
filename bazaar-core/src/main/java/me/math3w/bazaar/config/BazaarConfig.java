@@ -5,6 +5,7 @@ import me.math3w.bazaar.bazaar.product.ProductConfiguration;
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
 import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.internal.util.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -36,6 +37,7 @@ public class BazaarConfig extends CustomConfig {
         categories.add(createDefaultCategory(Material.ENCHANTMENT_TABLE, "&dOddities", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 6).build(), getDefaultOdditiesProductCategories()));
 
         addDefault("categories", categories);
+        addDefault("search-menu", SearchMenuConfiguration.createDefaultConfiguration(ChatColor.GREEN + "Bazaar ➜ Search", new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)));
     }
 
     private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
@@ -287,6 +289,10 @@ public class BazaarConfig extends CustomConfig {
                 .appendLore("")
                 .appendLore(ChatColor.YELLOW + "Click to view products!")
                 .build();
+    }
+
+    public SearchMenuConfiguration getSearchMenuConfiguration() {
+        return (SearchMenuConfiguration) getConfig().get("search-menu");
     }
 
     public List<CategoryConfiguration> getCategories() {

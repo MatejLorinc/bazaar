@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu;
 
+import de.rapha149.signgui.SignGUI;
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.zort.containr.ContextClickInfo;
@@ -17,6 +18,15 @@ public class DefaultClickActionManager implements ClickActionManager {
 
         addClickAction("close", ContextClickInfo::close);
         addClickAction("back", clickInfo -> bazaarPlugin.getMenuHistory().openPrevious(clickInfo.getPlayer()));
+        addClickAction("search", clickInfo -> {
+            new SignGUI()
+                    .lines(bazaarPlugin.getMenuConfig().getStringList("search-sign").toArray(new String[4]))
+                    .onFinish((player, lines) -> {
+                        String filter = lines[0];
+                        bazaarPlugin.getBazaar().openSearch(player, filter);
+                        return null;
+                    }).open(clickInfo.getPlayer());
+        });
     }
 
     @Override

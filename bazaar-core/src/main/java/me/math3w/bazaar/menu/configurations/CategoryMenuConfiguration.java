@@ -26,6 +26,10 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
     }
 
     public static CategoryMenuConfiguration createDefaultConfiguration(String name, ItemStack glass) {
+        return new CategoryMenuConfiguration(name, 6, getDefaultCategoryMenuItems(glass));
+    }
+
+    public static List<ConfigurableMenuItem> getDefaultCategoryMenuItems(ItemStack glass) {
         int[] glassSlots = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 10, 17, 19, 26, 28, 35, 37, 44, 46, 48, 51, 52, 53};
 
         List<ConfigurableMenuItem> items = new ArrayList<>();
@@ -69,14 +73,45 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                         .appendLore(ChatColor.YELLOW + "Click to manage!")
                         .build(),
                 "manage-orders"));
-
-        return new CategoryMenuConfiguration(name, 6, items);
+        return items;
     }
 
     public static CategoryMenuConfiguration deserialize(Map<String, Object> args) {
         return new CategoryMenuConfiguration((String) args.get("name"),
                 (Integer) args.get("rows"),
                 (List<ConfigurableMenuItem>) args.get("items"));
+    }
+
+    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer productCategoriesContainer, ClickActionManager clickActionManager) {
+        if (productCategoriesContainer.getCurrentPageIndex() > 0) {
+            gui.setElement(48, Component.element()
+                    .click(info -> {
+                        productCategoriesContainer.previousPage();
+                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, clickActionManager);
+                        gui.update(info.getPlayer());
+                    })
+                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Previous page"))
+                    .build());
+        } else {
+            menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 48).findAny().ifPresent(glassItem -> {
+                glassItem.setItem(gui, clickActionManager);
+            });
+        }
+
+        if (productCategoriesContainer.getCurrentPageIndex() < productCategoriesContainer.getMaxPageIndex()) {
+            gui.setElement(51, Component.element()
+                    .click(info -> {
+                        productCategoriesContainer.nextPage();
+                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, clickActionManager);
+                        gui.update(info.getPlayer());
+                    })
+                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Next page"))
+                    .build());
+        } else {
+            menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 51).findAny().ifPresent(glassItem -> {
+                glassItem.setItem(gui, clickActionManager);
+            });
+        }
     }
 
     public GUI getMenu(Category selectedCategory) {
@@ -119,34 +154,6 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
     }
 
     private void setPagingArrows(GUI gui, PagedContainer productCategoriesContainer, ClickActionManager clickActionManager) {
-        if (productCategoriesContainer.getCurrentPageIndex() > 0) {
-            gui.setElement(48, Component.element()
-                    .click(info -> {
-                        productCategoriesContainer.previousPage();
-                        setPagingArrows(gui, productCategoriesContainer, clickActionManager);
-                        gui.update(info.getPlayer());
-                    })
-                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Previous page"))
-                    .build());
-        } else {
-            items.stream().filter(item -> item.getSlot() == 48).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, clickActionManager);
-            });
-        }
-
-        if (productCategoriesContainer.getCurrentPageIndex() < productCategoriesContainer.getMaxPageIndex()) {
-            gui.setElement(51, Component.element()
-                    .click(info -> {
-                        productCategoriesContainer.nextPage();
-                        setPagingArrows(gui, productCategoriesContainer, clickActionManager);
-                        gui.update(info.getPlayer());
-                    })
-                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Next page"))
-                    .build());
-        } else {
-            items.stream().filter(item -> item.getSlot() == 51).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, clickActionManager);
-            });
-        }
+        setPagingArrows(this, gui, productCategoriesContainer, clickActionManager);
     }
 }

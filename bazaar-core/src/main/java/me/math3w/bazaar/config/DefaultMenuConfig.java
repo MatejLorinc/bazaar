@@ -29,9 +29,11 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
     protected void addDefaults() {
         addDefault("productcategory-lore", Collections.singletonList("&8%products% products"));
         addDefault("product-lore", Arrays.asList("&7Buy price: &6%buy-price% coins", "&7Sell price: &6%sell-price% coins"));
+        addDefault("search-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter Query", ""));
     }
 
-    private List<String> getLorePlaceholder(String path, MessagePlaceholder... placeholders) {
+    @Override
+    public List<String> getStringList(String path, MessagePlaceholder... placeholders) {
         return formatStringList(getConfig().getStringList(path), placeholders);
     }
 
@@ -41,7 +43,7 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
         ItemMeta itemMeta = icon.getItemMeta();
         List<String> lore = new ArrayList<>(itemMeta.getLore());
 
-        List<String> placeholderLore = this.getLorePlaceholder(placeholder, innerPlaceholders);
+        List<String> placeholderLore = this.getStringList(placeholder, innerPlaceholders);
 
         for (int i = 0; i < lore.size(); i++) {
             String line = lore.get(i);
