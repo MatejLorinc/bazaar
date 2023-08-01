@@ -59,9 +59,10 @@ public class MenuListeners implements Listener {
         ItemStack item = event.getCurrentItem();
 
         if (!GUIRepository.hasOpen(player)) return;
-        if (item == null || item.getType() != Material.AIR) return;
-
+        
         event.setCancelled(true);
+
+        if (item == null || item.getType() != Material.AIR) return;
 
         GUI gui = GUIRepository.OPENED_GUIS.get(playerName);
         gui.setFrozen(true);
