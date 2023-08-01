@@ -16,12 +16,22 @@ public class ProductImpl implements Product {
     }
 
     @Override
+    public ItemStack getItem() {
+        return config.getItem();
+    }
+
+    @Override
+    public void setItem(ItemStack item) {
+        config.setItem(item);
+        productCategory.getCategory().getBazaar().saveConfig();
+    }
+
+    @Override
     public ItemStack getIcon() {
-        //TODO Prices
         return productCategory.getCategory().getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(config.getIcon(),
                 "product-lore",
-                new MessagePlaceholder("buy-price", "0"),
-                new MessagePlaceholder("sell-price", "0"));
+                new MessagePlaceholder("buy-price", Utils.getTextPrice(getLowestBuyPrice())),
+                new MessagePlaceholder("sell-price", Utils.getTextPrice(getHighestSellPrice())));
     }
 
     @Override
@@ -44,5 +54,15 @@ public class ProductImpl implements Product {
     @Override
     public ProductCategory getProductCategory() {
         return productCategory;
+    }
+
+    @Override
+    public double getLowestBuyPrice() {
+        return 0;
+    }
+
+    @Override
+    public double getHighestSellPrice() {
+        return 0;
     }
 }

@@ -1,9 +1,10 @@
 package me.math3w.bazaar.menu;
 
-import me.math3w.bazaar.api.menu.ClickActionManager;
+import me.math3w.bazaar.api.BazaarAPI;
 import me.zort.containr.Component;
 import me.zort.containr.ContainerComponent;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public class ConfigurableMenuItem implements ConfigurationSerializable {
         return action;
     }
 
-    public void setItem(ContainerComponent containerComponent, ClickActionManager clickActionManager) {
-        containerComponent.setElement(slot, Component.element(item).click(clickActionManager.getClickAction(action)).build());
+    public void setItem(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player) {
+        containerComponent.setElement(slot, Component.element(bazaarApi.getItemPlaceholders().replaceItemPlaceholders(item, player)).click(bazaarApi.getClickActionManager().getClickAction(action)).build());
     }
 
     @Override

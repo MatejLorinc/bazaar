@@ -269,12 +269,14 @@ public class BazaarConfig extends CustomConfig {
     }
 
     private ProductConfiguration getProductConfiguration(ItemStack item, String name) {
-        return new ProductConfiguration(ItemBuilder.newBuilder(item)
-                .appendLore("")
-                .appendLore("%product-lore%")
-                .appendLore("")
-                .appendLore(ChatColor.YELLOW + "Click to view details!")
-                .build(), name);
+        return new ProductConfiguration(item,
+                ItemBuilder.newBuilder(item)
+                        .appendLore("")
+                        .appendLore("%product-lore%")
+                        .appendLore("")
+                        .appendLore(ChatColor.YELLOW + "Click to view details!")
+                        .build(),
+                name);
     }
 
     private ProductConfiguration getProductConfiguration(Material material, String name) {

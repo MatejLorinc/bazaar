@@ -4,6 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.menu.ClickActionManager;
+import me.math3w.bazaar.api.menu.ItemPlaceholders;
 import me.math3w.bazaar.api.menu.MenuHistory;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
@@ -14,10 +15,7 @@ import me.math3w.bazaar.commands.EditCommand;
 import me.math3w.bazaar.config.BazaarConfig;
 import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
-import me.math3w.bazaar.menu.ConfigurableMenuItem;
-import me.math3w.bazaar.menu.DefaultClickActionManager;
-import me.math3w.bazaar.menu.DefaultMenuHistory;
-import me.math3w.bazaar.menu.MenuListeners;
+import me.math3w.bazaar.menu.*;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
@@ -32,6 +30,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     private MenuConfig menuConfig;
     private Bazaar bazaar;
     private ClickActionManager clickActionManager;
+    private ItemPlaceholders itemPlaceholders;
     private MenuHistory menuHistory;
 
     @Override
@@ -59,6 +58,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         bazaar = new BazaarImpl(this);
 
         clickActionManager = new DefaultClickActionManager(this);
+        itemPlaceholders = new DefaultItemPlaceholders(this);
 
         menuHistory = new DefaultMenuHistory();
 
@@ -86,6 +86,11 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     @Override
     public ClickActionManager getClickActionManager() {
         return clickActionManager;
+    }
+
+    @Override
+    public ItemPlaceholders getItemPlaceholders() {
+        return itemPlaceholders;
     }
 
     public MenuHistory getMenuHistory() {

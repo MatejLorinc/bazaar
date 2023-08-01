@@ -1,10 +1,15 @@
 package me.math3w.bazaar.menu;
 
-import me.math3w.bazaar.api.menu.ClickActionManager;
+import me.math3w.bazaar.api.BazaarAPI;
 import me.zort.containr.Component;
 import me.zort.containr.ContainerComponent;
 import me.zort.containr.builder.SimpleGUIBuilder;
+import me.zort.containr.internal.util.ItemBuilder;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +24,15 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
         this.name = name;
         this.rows = rows;
         this.items = items;
+    }
+
+    public static void fillWithGlass(int rows, List<ConfigurableMenuItem> items) {
+        ItemStack glass = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 15).withName(ChatColor.WHITE.toString()).build();
+        for (int i = 0; i < rows * 9; i++) {
+            int finalI = i;
+            if (items.stream().anyMatch(configurableMenuItem -> configurableMenuItem.getSlot() == finalI)) continue;
+            items.add(new ConfigurableMenuItem(i, glass, ""));
+        }
     }
 
     @Override
@@ -48,9 +62,9 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
         return items;
     }
 
-    protected void loadItems(ContainerComponent containerComponent, ClickActionManager clickActionManager) {
+    protected void loadItems(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player) {
         for (ConfigurableMenuItem item : items) {
-            item.setItem(containerComponent, clickActionManager);
+            item.setItem(containerComponent, bazaarApi, player);
         }
     }
 }

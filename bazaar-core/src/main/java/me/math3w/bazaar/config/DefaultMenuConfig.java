@@ -19,8 +19,10 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
 
     public static List<String> formatStringList(List<String> strings, MessagePlaceholder... placeholders) {
         for (MessagePlaceholder placeholder : placeholders) {
-            strings.replaceAll(string -> Utils.colorize(string.replaceAll("%" + placeholder.getPlaceholder() + "%", placeholder.getValue())));
+            strings.replaceAll(string -> string.replaceAll("%" + placeholder.getPlaceholder() + "%", placeholder.getValue()));
         }
+
+        strings.replaceAll(Utils::colorize);
 
         return strings;
     }
@@ -29,6 +31,10 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
     protected void addDefaults() {
         addDefault("productcategory-lore", Collections.singletonList("&8%products% products"));
         addDefault("product-lore", Arrays.asList("&7Buy price: &6%buy-price% coins", "&7Sell price: &6%sell-price% coins"));
+        addDefault("product", Collections.singletonList("&8%product%"));
+        addDefault("sell-inventory", Arrays.asList("%items%", "", "&7You earn: &6%earned-coins% coins", "", "&eClick to sell!"));
+        addDefault("sell-inventory-none", Arrays.asList("&cYou don't have anything to", "&csell!"));
+        addDefault("item", Collections.singletonList(" &a%item-amount%&7x &f%item-name% &7for &6%item-coins% coins"));
         addDefault("search-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter Query", ""));
     }
 

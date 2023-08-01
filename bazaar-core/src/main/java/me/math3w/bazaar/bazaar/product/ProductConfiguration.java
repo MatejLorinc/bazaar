@@ -7,17 +7,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProductConfiguration implements ConfigurationSerializable {
+    private ItemStack item;
     private ItemStack icon;
     private String name;
 
-    public ProductConfiguration(ItemStack icon, String name) {
+    public ProductConfiguration(ItemStack item, ItemStack icon, String name) {
+        this.item = item;
         this.icon = icon;
         this.name = name;
     }
 
     public static ProductConfiguration deserialize(Map<String, Object> args) {
-        return new ProductConfiguration((ItemStack) args.get("icon"),
+        return new ProductConfiguration((ItemStack) args.get("item"),
+                (ItemStack) args.get("icon"),
                 (String) args.get("name"));
+    }
+
+    public ItemStack getItem() {
+        return item;
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = item;
     }
 
     public ItemStack getIcon() {

@@ -1,8 +1,8 @@
 package me.math3w.bazaar.menu.configurations;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
-import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.Component;
@@ -10,7 +10,6 @@ import me.zort.containr.GUI;
 import me.zort.containr.internal.util.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,12 +64,7 @@ public class ProductCategoryMenuConfiguration extends MenuConfiguration {
                 break;
         }
 
-        ItemStack glass = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 15).withName(ChatColor.WHITE.toString()).build();
-        for (int i = 0; i < rows * 9; i++) {
-            int finalI = i;
-            if (items.stream().anyMatch(configurableMenuItem -> configurableMenuItem.getSlot() == finalI)) continue;
-            items.add(new ConfigurableMenuItem(i, glass, ""));
-        }
+        fillWithGlass(rows, items);
 
         return new ProductCategoryMenuConfiguration(name, rows, items, productSlots);
     }
@@ -92,10 +86,10 @@ public class ProductCategoryMenuConfiguration extends MenuConfiguration {
     }
 
     public GUI getMenu(ProductCategory selectedCategory) {
-        ClickActionManager clickActionManager = selectedCategory.getCategory().getBazaar().getBazaarApi().getClickActionManager();
+        BazaarAPI bazaarApi = selectedCategory.getCategory().getBazaar().getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, clickActionManager);
+            super.loadItems(gui, bazaarApi, player);
 
             List<Product> products = selectedCategory.getProducts();
 

@@ -1,10 +1,10 @@
 package me.math3w.bazaar.menu.configurations;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
-import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.math3w.bazaar.utils.Utils;
@@ -15,6 +15,7 @@ import me.zort.containr.internal.util.ItemBuilder;
 import me.zort.containr.internal.util.Items;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -53,11 +54,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                         .appendLore(ChatColor.GRAY + "inventory that can be sold on")
                         .appendLore(ChatColor.GRAY + "the Bazaar.")
                         .appendLore("")
-                        .appendLore(ChatColor.GRAY + "%items%")
-                        .appendLore("")
-                        .appendLore(ChatColor.GRAY + "You earn: %earned-coins% coins")
-                        .appendLore("")
-                        .appendLore(ChatColor.YELLOW + "Click to sell!")
+                        .appendLore("%sell-inventory%")
                         .build(),
                 "sell-inventory"));
         items.add(new ConfigurableMenuItem(49,
@@ -83,19 +80,19 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                 (List<ConfigurableMenuItem>) args.get("items"));
     }
 
-    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer productCategoriesContainer, ClickActionManager clickActionManager) {
+    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer productCategoriesContainer, BazaarAPI bazaarApi, Player player) {
         if (productCategoriesContainer.getCurrentPageIndex() > 0) {
             gui.setElement(48, Component.element()
                     .click(info -> {
                         productCategoriesContainer.previousPage();
-                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, clickActionManager);
+                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, bazaarApi, player);
                         gui.update(info.getPlayer());
                     })
                     .item(Items.create(Material.ARROW, ChatColor.GREEN + "Previous page"))
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 48).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, clickActionManager);
+                glassItem.setItem(gui, bazaarApi, player);
             });
         }
 
@@ -103,23 +100,23 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
             gui.setElement(51, Component.element()
                     .click(info -> {
                         productCategoriesContainer.nextPage();
-                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, clickActionManager);
+                        setPagingArrows(menuConfiguration, gui, productCategoriesContainer, bazaarApi, player);
                         gui.update(info.getPlayer());
                     })
                     .item(Items.create(Material.ARROW, ChatColor.GREEN + "Next page"))
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 51).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, clickActionManager);
+                glassItem.setItem(gui, bazaarApi, player);
             });
         }
     }
 
     public GUI getMenu(Category selectedCategory) {
-        ClickActionManager clickActionManager = selectedCategory.getBazaar().getBazaarApi().getClickActionManager();
+        BazaarAPI bazaarApi = selectedCategory.getBazaar().getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, clickActionManager);
+            super.loadItems(gui, bazaarApi, player);
 
             Bazaar bazaar = selectedCategory.getBazaar();
 
@@ -162,11 +159,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                     .build();
 
             gui.setContainer(11, productCategoriesContainer);
-            setPagingArrows(gui, productCategoriesContainer, clickActionManager);
+            setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player);
         }).build();
-    }
-
-    private void setPagingArrows(GUI gui, PagedContainer productCategoriesContainer, ClickActionManager clickActionManager) {
-        setPagingArrows(this, gui, productCategoriesContainer, clickActionManager);
     }
 }

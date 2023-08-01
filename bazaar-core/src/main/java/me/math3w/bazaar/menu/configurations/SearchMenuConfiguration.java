@@ -1,10 +1,9 @@
 package me.math3w.bazaar.menu.configurations;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
-import me.math3w.bazaar.api.bazaar.ProductCategory;
-import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.Component;
@@ -12,7 +11,6 @@ import me.zort.containr.GUI;
 import me.zort.containr.PagedContainer;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +30,10 @@ public class SearchMenuConfiguration extends MenuConfiguration {
     }
 
     public GUI getMenu(Bazaar bazaar, String filter) {
-        ClickActionManager clickActionManager = bazaar.getBazaarApi().getClickActionManager();
+        BazaarAPI bazaarApi = bazaar.getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, clickActionManager);
+            super.loadItems(gui, bazaarApi, player);
 
             gui.setContainer(0, Component.staticContainer()
                     .size(1, 5)
@@ -54,17 +52,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
             PagedContainer productCategoriesContainer = Component.pagedContainer()
                     .size(6, 4)
                     .init(container -> {
-                        List<Product> products = new ArrayList<>();
-
-                        for (Category category : bazaar.getCategories()) {
-                            for (ProductCategory productCategory : category.getProductCategories()) {
-                                for (Product product : productCategory.getProducts()) {
-                                    if (!product.getName().toLowerCase().contains(filter.toLowerCase())) continue;
-                                    products.add(product);
-                                }
-                            }
-                        }
-
+                        List<Product> products = bazaar.getProducts(product -> product.getName().toLowerCase().contains(filter.toLowerCase()));
                         for (Product product : products) {
                             container.appendElement(Component.element()
                                     .click(element -> {
@@ -77,11 +65,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                     .build();
 
             gui.setContainer(11, productCategoriesContainer);
-            setPagingArrows(gui, productCategoriesContainer, clickActionManager);
+            CategoryMenuConfiguration.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player);
         }).build();
-    }
-
-    private void setPagingArrows(GUI gui, PagedContainer productCategoriesContainer, ClickActionManager clickActionManager) {
-        CategoryMenuConfiguration.setPagingArrows(this, gui, productCategoriesContainer, clickActionManager);
     }
 }

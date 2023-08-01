@@ -4,6 +4,8 @@ import me.math3w.bazaar.api.BazaarAPI;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public interface Bazaar {
     void open(Player player);
@@ -17,4 +19,10 @@ public interface Bazaar {
     void saveConfig();
 
     BazaarAPI getBazaarApi();
+
+    List<Product> getProducts();
+
+    List<Product> getProducts(Predicate<Product> filter);
+
+    Map<Product, Integer> getProductsInInventory(Player player);
 }

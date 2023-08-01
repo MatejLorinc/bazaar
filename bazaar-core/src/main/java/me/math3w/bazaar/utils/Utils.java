@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+
 public class Utils {
     private Utils() {
         throw new IllegalStateException("Utility class cannot be instantiated");
@@ -25,5 +27,9 @@ public class Utils {
         glowedItem.setItemMeta(itemMeta);
 
         return glowedItem;
+    }
+
+    public static String getTextPrice(double price) {
+        return new DecimalFormat("#.#").format(price);
     }
 }
