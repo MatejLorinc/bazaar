@@ -35,6 +35,10 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
         addDefault("sell-inventory", Arrays.asList("%items%", "", "&7You earn: &6%earned-coins% coins", "", "&eClick to sell!"));
         addDefault("sell-inventory-none", Arrays.asList("&cYou don't have anything to", "&csell!"));
         addDefault("item", Collections.singletonList(" &a%item-amount%&7x &f%item-name% &7for &6%item-coins% coins"));
+        addDefault("buy-instantly", Arrays.asList("&7Price per unit: &6%buy-price% coins", "&7Stack price: &6%stack-buy-price% coins"));
+        addDefault("sell-instantly", Arrays.asList("&7Inventory: &a%item-amount% items", "", "&7Amount: &a%item-amount%&7x", "&7Total: &6%coins% coins"));
+        addDefault("buy-order", Collections.singletonList("&8- &6%coins% coins&7 each | &a%item%&7x in &f%orders% orders"));
+        addDefault("sell-offer", Collections.singletonList("&8- &6%coins% coins&7 each | &a%item%&7x from &f%offers% offers"));
         addDefault("search-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter Query", ""));
     }
 
@@ -47,6 +51,9 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
     public ItemStack replaceLorePlaceholders(ItemStack icon, String placeholder, MessagePlaceholder... innerPlaceholders) {
         ItemStack newIcon = icon.clone();
         ItemMeta itemMeta = icon.getItemMeta();
+
+        if (itemMeta == null || !itemMeta.hasLore()) return icon;
+
         List<String> lore = new ArrayList<>(itemMeta.getLore());
 
         List<String> placeholderLore = this.getStringList(placeholder, innerPlaceholders);

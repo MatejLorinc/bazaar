@@ -50,6 +50,7 @@ public class ProductConfiguration implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> args = new HashMap<>();
+        args.put("item", item);
         args.put("icon", icon);
         args.put("name", name);
         return args;

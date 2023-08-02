@@ -89,7 +89,7 @@ public class ProductCategoryMenuConfiguration extends MenuConfiguration {
         BazaarAPI bazaarApi = selectedCategory.getCategory().getBazaar().getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, bazaarApi, player);
+            super.loadItems(gui, bazaarApi, player, selectedCategory);
 
             List<Product> products = selectedCategory.getProducts();
 
@@ -100,9 +100,7 @@ public class ProductCategoryMenuConfiguration extends MenuConfiguration {
                 Product product = products.get(i);
 
                 gui.setElement(slot, Component.element()
-                        .click(element -> {
-                            //TODO Open product menu
-                        })
+                        .click(element -> bazaarApi.getBazaar().openProduct(player, product))
                         .item(product.getIcon())
                         .build());
             }

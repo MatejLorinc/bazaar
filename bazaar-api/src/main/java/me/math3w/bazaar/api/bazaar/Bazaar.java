@@ -14,6 +14,8 @@ public interface Bazaar {
 
     void openSearch(Player player, String filter);
 
+    void openProduct(Player player, Product product);
+
     List<Category> getCategories();
 
     void saveConfig();
@@ -25,4 +27,6 @@ public interface Bazaar {
     List<Product> getProducts(Predicate<Product> filter);
 
     Map<Product, Integer> getProductsInInventory(Player player);
+
+    int getProductAmountInInventory(Product product, Player player);
 }

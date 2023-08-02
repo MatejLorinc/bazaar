@@ -33,7 +33,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
         BazaarAPI bazaarApi = bazaar.getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, bazaarApi, player);
+            super.loadItems(gui, bazaarApi, player, null);
 
             gui.setContainer(0, Component.staticContainer()
                     .size(1, 5)
@@ -55,9 +55,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                         List<Product> products = bazaar.getProducts(product -> product.getName().toLowerCase().contains(filter.toLowerCase()));
                         for (Product product : products) {
                             container.appendElement(Component.element()
-                                    .click(element -> {
-                                        //TODO Open product menu
-                                    })
+                                    .click(element -> bazaar.openProduct(player, product))
                                     .item(product.getIcon())
                                     .build());
                         }

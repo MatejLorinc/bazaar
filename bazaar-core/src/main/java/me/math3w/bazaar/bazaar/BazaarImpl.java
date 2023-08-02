@@ -44,6 +44,11 @@ public class BazaarImpl implements Bazaar {
     }
 
     @Override
+    public void openProduct(Player player, Product product) {
+        bazaarPlugin.getBazaarConfig().getProductMenuConfiguration().getMenu(product).open(player);
+    }
+
+    @Override
     public List<Category> getCategories() {
         return categories;
     }
@@ -84,21 +89,27 @@ public class BazaarImpl implements Bazaar {
         Map<Product, Integer> productsInInventory = new HashMap<>();
 
         for (Product product : getProducts()) {
-            int totalAmount = 0;
-
-            for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack == null) continue;
-
-                if (itemStack.isSimilar(product.getItem())) {
-                    totalAmount += itemStack.getAmount();
-                }
-            }
-
+            int totalAmount = getProductAmountInInventory(product, player);
             if (totalAmount > 0) {
                 productsInInventory.put(product, totalAmount);
             }
         }
 
         return productsInInventory;
+    }
+
+    @Override
+    public int getProductAmountInInventory(Product product, Player player) {
+        int amount = 0;
+
+        for (ItemStack itemStack : player.getInventory().getContents()) {
+            if (itemStack == null) continue;
+
+            if (itemStack.isSimilar(product.getItem())) {
+                amount += itemStack.getAmount();
+            }
+        }
+
+        return amount;
     }
 }

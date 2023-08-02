@@ -5,6 +5,7 @@ import me.math3w.bazaar.bazaar.product.ProductConfiguration;
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
 import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.ProductMenuConfiguration;
 import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
 import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.internal.util.ItemBuilder;
@@ -38,6 +39,7 @@ public class BazaarConfig extends CustomConfig {
 
         addDefault("categories", categories);
         addDefault("search-menu", SearchMenuConfiguration.createDefaultConfiguration(ChatColor.GREEN + "Bazaar ➜ Search", new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)));
+        addDefault("product-menu", ProductMenuConfiguration.createDefaultProductCategoryConfiguration());
     }
 
     private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
@@ -295,6 +297,10 @@ public class BazaarConfig extends CustomConfig {
 
     public SearchMenuConfiguration getSearchMenuConfiguration() {
         return (SearchMenuConfiguration) getConfig().get("search-menu");
+    }
+
+    public ProductMenuConfiguration getProductMenuConfiguration() {
+        return (ProductMenuConfiguration) getConfig().get("product-menu");
     }
 
     public List<CategoryConfiguration> getCategories() {

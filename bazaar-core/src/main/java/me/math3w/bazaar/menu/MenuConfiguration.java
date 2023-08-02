@@ -1,6 +1,7 @@
 package me.math3w.bazaar.menu;
 
 import me.math3w.bazaar.api.BazaarAPI;
+import me.math3w.bazaar.api.menu.MenuInfo;
 import me.zort.containr.Component;
 import me.zort.containr.ContainerComponent;
 import me.zort.containr.builder.SimpleGUIBuilder;
@@ -62,9 +63,9 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
         return items;
     }
 
-    protected void loadItems(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player) {
+    protected void loadItems(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player, MenuInfo info) {
         for (ConfigurableMenuItem item : items) {
-            item.setItem(containerComponent, bazaarApi, player);
+            item.setItem(containerComponent, bazaarApi, player, info);
         }
     }
 }

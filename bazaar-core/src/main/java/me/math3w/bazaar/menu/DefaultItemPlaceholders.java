@@ -4,7 +4,9 @@ import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
+import me.math3w.bazaar.api.menu.ItemPlaceholderFunction;
 import me.math3w.bazaar.api.menu.ItemPlaceholders;
+import me.math3w.bazaar.api.menu.MenuInfo;
 import me.math3w.bazaar.utils.MenuUtils;
 import me.math3w.bazaar.utils.Utils;
 import org.bukkit.entity.Player;
@@ -12,18 +14,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
-import java.util.function.BiFunction;
 
 public class DefaultItemPlaceholders implements ItemPlaceholders {
     private final BazaarPlugin bazaarPlugin;
-    private final Set<BiFunction<ItemStack, Player, ItemStack>> itemPlaceholders = new HashSet<>();
+    private final Set<ItemPlaceholderFunction> itemPlaceholders = new HashSet<>();
 
     public DefaultItemPlaceholders(BazaarPlugin bazaarPlugin) {
         this.bazaarPlugin = bazaarPlugin;
 
         MenuConfig menuConfig = bazaarPlugin.getMenuConfig();
 
-        addItemPlaceholder((item, player) -> {
+        addItemPlaceholder((item, player, info) -> {
             ItemStack newItem = item.clone();
             ItemMeta itemMeta = newItem.getItemMeta();
 
@@ -87,18 +88,42 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
 
             return newItem;
         });
+
+        addItemPlaceholder((item, player, info) -> {
+            if (!(info instanceof Product)) return item;
+            Product product = (Product) info;
+            return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", product.getName()));
+        });
+
+        addItemPlaceholder((item, player, info) -> {
+            if (!(info instanceof Product)) return item;
+            Product product = (Product) info;
+            return menuConfig.replaceLorePlaceholders(item,
+                    "buy-instantly",
+                    new MessagePlaceholder("buy-price", Utils.getTextPrice(product.getLowestBuyPrice())),
+                    new MessagePlaceholder("stack-buy-price", Utils.getTextPrice(product.getLowestBuyPrice() * 64))); //TODO Calculate real price from current stock
+        });
+
+        addItemPlaceholder((item, player, info) -> {
+            if (!(info instanceof Product)) return item;
+            Product product = (Product) info;
+            return menuConfig.replaceLorePlaceholders(item,
+                    "sell-instantly",
+                    new MessagePlaceholder("item-amount", Utils.getTextPrice(bazaarPlugin.getBazaar().getProductAmountInInventory(product, player))),
+                    new MessagePlaceholder("coins", Utils.getTextPrice(product.getHighestSellPrice())));
+        });
     }
 
     @Override
-    public void addItemPlaceholder(BiFunction<ItemStack, Player, ItemStack> action) {
+    public void addItemPlaceholder(ItemPlaceholderFunction action) {
         itemPlaceholders.add(action);
     }
 
     @Override
-    public ItemStack replaceItemPlaceholders(ItemStack item, Player player) {
+    public ItemStack replaceItemPlaceholders(ItemStack item, Player player, MenuInfo info) {
         ItemStack newItem = item.clone();
-        for (BiFunction<ItemStack, Player, ItemStack> itemPlaceholder : itemPlaceholders) {
-            newItem = itemPlaceholder.apply(newItem, player);
+        for (ItemPlaceholderFunction itemPlaceholder : itemPlaceholders) {
+            newItem = itemPlaceholder.apply(newItem, player, info);
         }
         return newItem;
     }

@@ -15,6 +15,9 @@ public class MenuUtils {
     public static ItemStack replaceLorePlaceholders(ItemStack icon, MessagePlaceholder... placeholders) {
         ItemStack newIcon = icon.clone();
         ItemMeta itemMeta = icon.getItemMeta();
+
+        if (itemMeta == null || !itemMeta.hasLore()) return icon;
+
         List<String> lore = new ArrayList<>(itemMeta.getLore());
 
         for (int i = 0; i < lore.size(); i++) {

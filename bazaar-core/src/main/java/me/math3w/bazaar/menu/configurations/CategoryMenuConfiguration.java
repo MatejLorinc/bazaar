@@ -92,7 +92,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 48).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, bazaarApi, player);
+                glassItem.setItem(gui, bazaarApi, player, null);
             });
         }
 
@@ -107,7 +107,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == 51).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, bazaarApi, player);
+                glassItem.setItem(gui, bazaarApi, player, null);
             });
         }
     }
@@ -116,7 +116,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
         BazaarAPI bazaarApi = selectedCategory.getBazaar().getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, bazaarApi, player);
+            super.loadItems(gui, bazaarApi, player, selectedCategory);
 
             Bazaar bazaar = selectedCategory.getBazaar();
 
@@ -142,9 +142,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                             if (products.size() == 1) {
                                 Product product = products.get(0);
                                 container.appendElement(Component.element()
-                                        .click(element -> {
-                                            //TODO Open product menu
-                                        })
+                                        .click(element -> bazaar.openProduct(player, product))
                                         .item(product.getIcon())
                                         .build());
                                 continue;
