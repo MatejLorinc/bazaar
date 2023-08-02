@@ -35,9 +35,9 @@ public class DefaultMenuHistory implements MenuHistory {
         if (playerHistories.containsKey(uniqueId)) {
             Stack<GUI> history = playerHistories.get(uniqueId);
 
-            if (!history.isEmpty()) {
+            if (history.size() > 1) {
                 history.pop();
-                GUI gui = history.peek();
+                GUI gui = history.pop();
                 gui.open(player);
                 hasPrevious = true;
             }
