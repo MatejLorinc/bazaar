@@ -38,7 +38,12 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
         addDefault("buy-instantly", Arrays.asList("&7Price per unit: &6%buy-price% coins", "&7Stack price: &6%stack-buy-price% coins"));
         addDefault("sell-instantly", Arrays.asList("&7Inventory: &a%item-amount% items", "", "&7Amount: &a%item-amount%&7x", "&7Total: &6%coins% coins"));
         addDefault("buy-order", Collections.singletonList("&8- &6%coins% coins&7 each | &a%item%&7x in &f%orders% orders"));
+        addDefault("buy-order-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to order"));
+        addDefault("buy-order-price-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter price", "per unit"));
         addDefault("sell-offer", Collections.singletonList("&8- &6%coins% coins&7 each | &a%item%&7x from &f%offers% offers"));
+        addDefault("sell-offer-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to sell"));
+        addDefault("sell-offer-price-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter price", "per unit"));
+        addDefault("confirm-lore", Arrays.asList("", "&7Price per unit: &6%unit-price% coins", "", "&7Order: &a%amount%&7x &f%product%", "&7Total price: &6%total-price% coins"));
         addDefault("search-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter Query", ""));
     }
 

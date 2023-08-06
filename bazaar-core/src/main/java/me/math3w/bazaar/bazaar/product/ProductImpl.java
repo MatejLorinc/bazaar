@@ -4,6 +4,7 @@ import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
 import me.math3w.bazaar.utils.Utils;
+import me.zort.containr.internal.util.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 
 public class ProductImpl implements Product {
@@ -41,6 +42,17 @@ public class ProductImpl implements Product {
     }
 
     @Override
+    public ItemStack getConfirmationIcon(double unitPrice, int amount) {
+        return productCategory.getCategory().getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(
+                ItemBuilder.newBuilder(config.getItem()).appendLore("%confirm-lore%").build(),
+                "confirm-lore",
+                new MessagePlaceholder("unit-price", Utils.getTextPrice(unitPrice)),
+                new MessagePlaceholder("total-price", Utils.getTextPrice(unitPrice * amount)),
+                new MessagePlaceholder("amount", String.valueOf(amount)),
+                new MessagePlaceholder("product", getName()));
+    }
+
+    @Override
     public String getName() {
         return Utils.colorize(config.getName());
     }
@@ -49,6 +61,11 @@ public class ProductImpl implements Product {
     public void setName(String name) {
         config.setName(name);
         productCategory.getCategory().getBazaar().saveConfig();
+    }
+
+    @Override
+    public String getId() {
+        return getName().replace(" ", "_").toLowerCase();
     }
 
     @Override

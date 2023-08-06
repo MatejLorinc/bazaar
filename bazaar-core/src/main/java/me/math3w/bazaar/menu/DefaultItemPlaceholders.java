@@ -2,6 +2,7 @@ package me.math3w.bazaar.menu;
 
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Product;
+import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
 import me.math3w.bazaar.api.menu.ItemPlaceholderFunction;
@@ -90,9 +91,15 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
         });
 
         addItemPlaceholder((item, player, info) -> {
-            if (!(info instanceof Product)) return item;
-            Product product = (Product) info;
-            return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", product.getName()));
+            if (info instanceof Product) {
+                Product product = (Product) info;
+                return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", product.getName()));
+            } else if (info instanceof BazaarOrder) {
+                BazaarOrder order = (BazaarOrder) info;
+                return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", order.getProduct().getName()));
+            } else {
+                return item;
+            }
         });
 
         addItemPlaceholder((item, player, info) -> {

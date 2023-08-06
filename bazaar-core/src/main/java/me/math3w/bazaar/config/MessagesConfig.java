@@ -30,6 +30,10 @@ public class MessagesConfig extends CustomConfig {
 
     @Override
     protected void addDefaults() {
-
+        addDefault("order.reject", "&cThe order was rejected");
+        addDefault("order.buy.success", "&7The buy order &6%amount%x %product% &7for &6%coins% coins &7was placed to the bazaar");
+        addDefault("order.buy.not-enough", "&cYou don't have enough coins for this buy order &7[&6%amount%x %product% &7for &6%coins% coins&7]");
+        addDefault("order.sell.success", "&7The sell offer &6%amount%x %product% &7for &6%coins% coins &7was placed to the bazaar");
+        addDefault("order.sell.not-enough", "&cYou don't have enough items for this sell offer &7[&6%amount%x %product% &7for &6%coins% coins&7]");
     }
 }

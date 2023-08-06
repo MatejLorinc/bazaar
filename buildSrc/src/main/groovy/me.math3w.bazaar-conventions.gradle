@@ -20,6 +20,7 @@ dependencies {
     implementation 'com.github.ZorTik:ContainrGUI:development-SNAPSHOT'
     implementation 'com.github.Rapha149.SignGUI:signgui:v1.9.3'
     implementation 'de.tr7zw:item-nbt-api:2.11.3'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 tasks.withType(JavaCompile).configureEach {

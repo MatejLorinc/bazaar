@@ -27,6 +27,16 @@ public class DefaultMenuHistory implements MenuHistory {
     }
 
     @Override
+    public void setHistory(Player player, Stack<GUI> history) {
+        playerHistories.put(player.getUniqueId(), history);
+    }
+
+    @Override
+    public Stack<GUI> getHistory(Player player) {
+        return playerHistories.get(player.getUniqueId());
+    }
+
+    @Override
     public boolean openPrevious(Player player) {
         boolean hasPrevious = false;
 

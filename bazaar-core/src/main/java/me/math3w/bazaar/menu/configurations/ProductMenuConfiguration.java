@@ -23,7 +23,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
     }
 
 
-    public static ProductMenuConfiguration createDefaultProductCategoryConfiguration() {
+    public static ProductMenuConfiguration createDefaultProductConfiguration() {
         List<ConfigurableMenuItem> items = new ArrayList<>();
 
         items.add(new ConfigurableMenuItem(10,

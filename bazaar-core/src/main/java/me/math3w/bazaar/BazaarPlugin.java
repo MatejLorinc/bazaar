@@ -2,37 +2,42 @@ package me.math3w.bazaar;
 
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
+import me.math3w.bazaar.api.bazaar.orders.OrderManager;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.api.menu.ItemPlaceholders;
 import me.math3w.bazaar.api.menu.MenuHistory;
 import me.math3w.bazaar.bazaar.BazaarImpl;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
+import me.math3w.bazaar.bazaar.orders.SQLOrderManager;
 import me.math3w.bazaar.bazaar.product.ProductConfiguration;
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
 import me.math3w.bazaar.commands.BazaarCommand;
 import me.math3w.bazaar.commands.EditCommand;
 import me.math3w.bazaar.config.BazaarConfig;
+import me.math3w.bazaar.config.DatabaseConfig;
 import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
 import me.math3w.bazaar.menu.*;
-import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.ProductMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.*;
 import me.zort.containr.Containr;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
+    private Economy economy = null;
     private MessagesConfig messagesConfig;
     private BazaarConfig bazaarConfig;
     private MenuConfig menuConfig;
+    private DatabaseConfig databaseConfig;
     private Bazaar bazaar;
     private ClickActionManager clickActionManager;
     private ItemPlaceholders itemPlaceholders;
     private MenuHistory menuHistory;
+    private OrderManager orderManager;
 
     @Override
     public void onLoad() {
@@ -44,15 +49,25 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         ConfigurationSerialization.registerClass(ProductCategoryMenuConfiguration.class);
         ConfigurationSerialization.registerClass(SearchMenuConfiguration.class);
         ConfigurationSerialization.registerClass(ProductMenuConfiguration.class);
+        ConfigurationSerialization.registerClass(ConfirmationMenuConfiguration.class);
     }
 
     @Override
     public void onEnable() {
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            Bukkit.getLogger().severe("No registered Vault provider found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         Containr.init(this);
+
+        economy = rsp.getProvider();
 
         messagesConfig = new MessagesConfig(this);
         bazaarConfig = new BazaarConfig(this);
         menuConfig = new DefaultMenuConfig(this);
+        databaseConfig = new DatabaseConfig(this);
 
         getCommand("bazaar").setExecutor(new BazaarCommand(this));
         getCommand("bazaaredit").setExecutor(new EditCommand());
@@ -64,7 +79,14 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
 
         menuHistory = new DefaultMenuHistory();
 
+        orderManager = new SQLOrderManager(this);
+
         Bukkit.getPluginManager().registerEvents(new MenuListeners(this), this);
+    }
+
+    @Override
+    public Economy getEconomy() {
+        return economy;
     }
 
     public MessagesConfig getMessagesConfig() {
@@ -80,6 +102,10 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         return menuConfig;
     }
 
+    public DatabaseConfig getDatabaseConfig() {
+        return databaseConfig;
+    }
+
     @Override
     public Bazaar getBazaar() {
         return bazaar;
@@ -93,6 +119,11 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     @Override
     public ItemPlaceholders getItemPlaceholders() {
         return itemPlaceholders;
+    }
+
+    @Override
+    public OrderManager getOrderManager() {
+        return orderManager;
     }
 
     public MenuHistory getMenuHistory() {

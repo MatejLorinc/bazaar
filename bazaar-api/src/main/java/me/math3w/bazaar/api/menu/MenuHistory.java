@@ -4,12 +4,17 @@ import me.zort.containr.GUI;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.Stack;
 import java.util.UUID;
 
 public interface MenuHistory {
     void addGui(Player player, GUI gui);
 
     void clearHistory(Player player);
+
+    void setHistory(Player player, Stack<GUI> history);
+
+    Stack<GUI> getHistory(Player player);
 
     boolean openPrevious(Player player);
 

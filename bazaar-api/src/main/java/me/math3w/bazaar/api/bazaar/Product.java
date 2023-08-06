@@ -12,9 +12,13 @@ public interface Product extends MenuInfo {
 
     void setIcon(ItemStack icon);
 
+    ItemStack getConfirmationIcon(double unitPrice, int amount);
+
     String getName();
 
     void setName(String name);
+
+    String getId();
 
     ProductCategory getProductCategory();
 

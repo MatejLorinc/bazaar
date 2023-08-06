@@ -1,12 +1,10 @@
 package me.math3w.bazaar.config;
 
+import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
 import me.math3w.bazaar.bazaar.product.ProductConfiguration;
 import me.math3w.bazaar.bazaar.productcategory.ProductCategoryConfiguration;
-import me.math3w.bazaar.menu.configurations.CategoryMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.ProductMenuConfiguration;
-import me.math3w.bazaar.menu.configurations.SearchMenuConfiguration;
+import me.math3w.bazaar.menu.configurations.*;
 import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.internal.util.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -39,7 +37,10 @@ public class BazaarConfig extends CustomConfig {
 
         addDefault("categories", categories);
         addDefault("search-menu", SearchMenuConfiguration.createDefaultConfiguration(ChatColor.GREEN + "Bazaar ➜ Search", new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)));
-        addDefault("product-menu", ProductMenuConfiguration.createDefaultProductCategoryConfiguration());
+        addDefault("product-menu", ProductMenuConfiguration.createDefaultProductConfiguration());
+        for (OrderType orderType : OrderType.values()) {
+            addDefault("confirm-" + orderType.name().toLowerCase() + "-menu", ConfirmationMenuConfiguration.createDefaultConfirmationConfiguration(orderType));
+        }
     }
 
     private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
@@ -301,6 +302,10 @@ public class BazaarConfig extends CustomConfig {
 
     public ProductMenuConfiguration getProductMenuConfiguration() {
         return (ProductMenuConfiguration) getConfig().get("product-menu");
+    }
+
+    public ConfirmationMenuConfiguration getConfirmationMenuConfiguration(OrderType orderType) {
+        return (ConfirmationMenuConfiguration) getConfig().get("confirm-" + orderType.name().toLowerCase() + "-menu");
     }
 
     public List<CategoryConfiguration> getCategories() {

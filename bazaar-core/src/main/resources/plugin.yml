@@ -3,6 +3,8 @@ main: me.math3w.bazaar.BazaarPlugin
 version: 1.0
 author: _Math3w_
 description: Recreation of hypixel skyblock bazaar system
+depend:
+  - Vault
 commands:
   bazaar:
     description: Opens bazaar menu
