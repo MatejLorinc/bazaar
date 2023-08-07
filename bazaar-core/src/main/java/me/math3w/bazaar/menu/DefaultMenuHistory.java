@@ -68,7 +68,7 @@ public class DefaultMenuHistory implements MenuHistory {
     @Override
     public Optional<GUI> getPrevious(UUID uniqueId) {
         Stack<GUI> list = playerHistories.getOrDefault(uniqueId, new Stack<>());
-        if (list.isEmpty()) return Optional.empty();
+        if (list.size() < 2) return Optional.empty();
         return Optional.of(list.get(list.size() - 2));
     }
 }
