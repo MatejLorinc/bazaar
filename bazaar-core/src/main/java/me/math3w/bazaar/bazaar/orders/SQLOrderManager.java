@@ -74,18 +74,10 @@ public class SQLOrderManager extends AbstractOrderManager {
     }
 
     @Override
-    public CompletableFuture<List<BazaarOrder>> getBuyOrders(Product product, Predicate<List<BazaarOrder>> shouldContinuePredicate) {
-        return getOrders(product, OrderType.BUY, shouldContinuePredicate);
-    }
-
-    @Override
-    public CompletableFuture<List<BazaarOrder>> getSellOffers(Product product, Predicate<List<BazaarOrder>> shouldContinuePredicate) {
-        return getOrders(product, OrderType.SELL, shouldContinuePredicate);
-    }
-
-    private CompletableFuture<List<BazaarOrder>> getOrders(Product product, OrderType type, Predicate<List<BazaarOrder>> shouldContinuePredicate) {
+    public CompletableFuture<List<BazaarOrder>> getOrders(Product product, OrderType type, Predicate<List<BazaarOrder>> shouldContinuePredicate) {
         return CompletableFuture.supplyAsync(() -> {
-            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("SELECT * FROM orders WHERE product_id=? AND order_type=? AND filled<amount")) {
+            String sortType = type == OrderType.BUY ? "DESC" : "ASC";
+            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("SELECT * FROM orders WHERE product_id=? AND order_type=? AND filled<amount ORDER BY unit_price " + sortType + ", created_at ASC")) {
                 statement.setString(1, product.getId());
                 statement.setString(2, type.name());
 

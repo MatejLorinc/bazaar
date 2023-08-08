@@ -1,6 +1,7 @@
 package me.math3w.bazaar.menu;
 
 import me.math3w.bazaar.BazaarPlugin;
+import me.math3w.bazaar.api.menu.MenuHistory;
 import me.zort.containr.GUI;
 import me.zort.containr.GUIRepository;
 import org.bukkit.Bukkit;
@@ -12,9 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
 
 public class MenuListeners implements Listener {
     private final BazaarPlugin plugin;
@@ -31,21 +31,31 @@ public class MenuListeners implements Listener {
         if (!GUIRepository.OPENED_GUIS.containsKey(playerName)) return;
 
         GUI gui = GUIRepository.OPENED_GUIS.get(playerName);
+        MenuHistory menuHistory = plugin.getMenuHistory();
 
-        plugin.getMenuHistory().addGui(player, gui);
+        GUI currentMenu = menuHistory.getCurrent(player).orElse(null);
+        if (currentMenu != null && gui.getInventory().equals(currentMenu.getInventory())) return;
+
+        menuHistory.addGui(player, gui);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
 
-        if (event.getInventory().equals(Optional.ofNullable(GUIRepository.OPENED_GUIS.get(event.getPlayer().getName())).map(GUI::getInventory).orElse(null))) {
-            GUIRepository.remove(event.getPlayer().getName());
-        }
-
         if (GUIRepository.OPENED_GUIS.containsKey(player.getName())) return;
 
-        plugin.getMenuHistory().clearHistory(player);
+        //Needs to be checked a tick later to do not clear inventory if it's just reopened
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!GUIRepository.OPENED_GUIS.containsKey(player.getName())) return;
+            Inventory openedInventory = GUIRepository.OPENED_GUIS.get(player.getName()).getInventory();
+
+            if (!event.getInventory().equals(openedInventory)) return;
+            if (openedInventory.equals(player.getOpenInventory().getTopInventory())) return;
+
+            GUIRepository.remove(event.getPlayer().getName());
+            plugin.getMenuHistory().clearHistory(player);
+        }, 1);
     }
 
     /*
@@ -59,7 +69,7 @@ public class MenuListeners implements Listener {
         ItemStack item = event.getCurrentItem();
 
         if (!GUIRepository.hasOpen(player)) return;
-        
+
         event.setCancelled(true);
 
         if (item == null || item.getType() != Material.AIR) return;

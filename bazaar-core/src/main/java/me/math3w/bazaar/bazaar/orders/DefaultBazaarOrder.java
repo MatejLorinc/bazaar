@@ -77,4 +77,12 @@ public class DefaultBazaarOrder implements BazaarOrder {
     public void claim(int amount) {
         this.claimed += amount;
     }
+
+    @Override
+    public boolean isSimilar(BazaarOrder other) {
+        if (!product.equals(other.getProduct())) return false;
+        if (unitPrice != other.getUnitPrice()) return false;
+        if (type != other.getType()) return false;
+        return true;
+    }
 }

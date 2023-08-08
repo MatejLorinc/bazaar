@@ -26,4 +26,6 @@ public interface BazaarOrder extends MenuInfo {
     int getClaimed();
 
     void claim(int amount);
+
+    boolean isSimilar(BazaarOrder other);
 }

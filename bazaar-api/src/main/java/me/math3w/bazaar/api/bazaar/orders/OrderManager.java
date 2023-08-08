@@ -12,7 +12,7 @@ public interface OrderManager {
 
     CompletableFuture<SubmitResult> submitBazaarOrder(BazaarOrder order);
 
-    CompletableFuture<List<BazaarOrder>> getBuyOrders(Product product, Predicate<List<BazaarOrder>> shouldContinuePredicate);
+    CompletableFuture<List<BazaarOrder>> getOrders(Product product, OrderType type, Predicate<List<BazaarOrder>> shouldContinuePredicate);
 
-    CompletableFuture<List<BazaarOrder>> getSellOffers(Product product, Predicate<List<BazaarOrder>> shouldContinuePredicate);
+    CompletableFuture<List<CompressedBazaarOrder>> getCompressedOrders(Product product, OrderType orderType, int limit);
 }

@@ -41,7 +41,7 @@ public class ConfigurableMenuItem implements ConfigurationSerializable {
     }
 
     public void setItem(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player, MenuInfo info) {
-        containerComponent.setElement(slot, Component.element(bazaarApi.getItemPlaceholders().replaceItemPlaceholders(item, player, info))
+        containerComponent.setElement(slot, Component.element(bazaarApi.getItemPlaceholders().replaceItemPlaceholders(containerComponent, item, slot, player, info))
                 .click(bazaarApi.getClickActionManager().getClickAction(action, info))
                 .build());
     }

@@ -21,4 +21,8 @@ public interface MenuHistory {
     Optional<GUI> getPrevious(Player player);
 
     Optional<GUI> getPrevious(UUID uniqueId);
+
+    Optional<GUI> getCurrent(Player player);
+
+    Optional<GUI> getCurrent(UUID uniqueId);
 }
