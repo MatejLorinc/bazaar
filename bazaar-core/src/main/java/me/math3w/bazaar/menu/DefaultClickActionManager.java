@@ -46,8 +46,8 @@ public class DefaultClickActionManager implements ClickActionManager {
                 requireNumberFromPlayer(clickInfo.getPlayer(), "buy-order-price-sign", unitPrice -> {
                     BazaarOrder order = bazaarPlugin.getOrderManager().prepareBazaarOrder(product, amount, unitPrice, OrderType.BUY, clickInfo.getPlayer().getUniqueId());
                     bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.BUY).getMenu(order).open(clickInfo.getPlayer());
-                });
-            });
+                }, Double::parseDouble);
+            }, Integer::parseInt);
         });
         addClickAction("sell-offer", menuInfo -> clickInfo -> {
             if (!(menuInfo instanceof Product)) return;
@@ -57,8 +57,8 @@ public class DefaultClickActionManager implements ClickActionManager {
                 requireNumberFromPlayer(clickInfo.getPlayer(), "sell-offer-price-sign", unitPrice -> {
                     BazaarOrder order = bazaarPlugin.getOrderManager().prepareBazaarOrder(product, amount, unitPrice, OrderType.SELL, clickInfo.getPlayer().getUniqueId());
                     bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.SELL).getMenu(order).open(clickInfo.getPlayer());
-                });
-            });
+                }, Double::parseDouble);
+            }, Integer::parseInt);
         });
 
         addClickAction("reject-order", clickInfo -> {
@@ -90,7 +90,7 @@ public class DefaultClickActionManager implements ClickActionManager {
         }).apply(menuInfo);
     }
 
-    private void requireNumberFromPlayer(Player player, String sign, Consumer<Integer> callback) {
+    private <T extends Number> void requireNumberFromPlayer(Player player, String sign, Consumer<T> callback, Function<String, T> parser) {
         Stack<GUI> history = bazaarPlugin.getMenuHistory().getHistory(player);
         player.closeInventory();
 
@@ -98,7 +98,7 @@ public class DefaultClickActionManager implements ClickActionManager {
                 .lines(bazaarPlugin.getMenuConfig().getStringList(sign).toArray(new String[4]))
                 .onFinish((signPlayer, lines) -> {
                     try {
-                        int amount = Integer.parseInt(lines[0]);
+                        T amount = parser.apply(lines[0]);
                         Bukkit.getScheduler().runTaskLater(bazaarPlugin, () -> {
                             bazaarPlugin.getMenuHistory().setHistory(player, history);
                             callback.accept(amount);

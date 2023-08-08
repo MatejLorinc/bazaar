@@ -41,7 +41,7 @@ public class SQLOrderManager extends AbstractOrderManager {
                 "id INTEGER PRIMARY KEY " + autoIncrementSyntax + ", " +
                 "product_id VARCHAR(32) NOT NULL, " +
                 "amount INTEGER NOT NULL, " +
-                "unit_price DECIMAL NOT NULL, " +
+                "unit_price DOUBLE NOT NULL, " +
                 "order_type VARCHAR(16) NOT NULL, " +
                 "player VARCHAR(36) NOT NULL, " +
                 "filled INTEGER DEFAULT 0, " +
