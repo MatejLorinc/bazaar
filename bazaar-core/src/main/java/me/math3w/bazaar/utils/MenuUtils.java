@@ -1,10 +1,7 @@
 package me.math3w.bazaar.utils;
 
 import me.math3w.bazaar.api.menu.MenuHistory;
-import me.zort.containr.Component;
-import me.zort.containr.Container;
-import me.zort.containr.ContainerComponent;
-import me.zort.containr.Element;
+import me.zort.containr.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,5 +43,13 @@ public class MenuUtils {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int getNextFreeSlot(PagedContainer container) {
+        int slot = 0;
+        while (!container.isFreeSlot(slot)) {
+            slot++;
+        }
+        return slot;
     }
 }

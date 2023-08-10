@@ -6,6 +6,7 @@ import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
+import me.math3w.bazaar.utils.MenuUtils;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
 import me.zort.containr.PagedContainer;
@@ -56,7 +57,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                         for (Product product : products) {
                             container.appendElement(Component.element()
                                     .click(element -> bazaar.openProduct(player, product))
-                                    .item(product.getIcon(container, container.getEmptyElementSlots()[0], player))
+                                    .item(product.getIcon(container, MenuUtils.getNextFreeSlot(container), player))
                                     .build());
                         }
                     })
@@ -66,4 +67,5 @@ public class SearchMenuConfiguration extends MenuConfiguration {
             CategoryMenuConfiguration.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player);
         }).build();
     }
+
 }

@@ -7,6 +7,7 @@ import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
 import me.math3w.bazaar.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
+import me.math3w.bazaar.utils.MenuUtils;
 import me.math3w.bazaar.utils.Utils;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
@@ -143,7 +144,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                                 Product product = products.get(0);
                                 container.appendElement(Component.element()
                                         .click(element -> bazaar.openProduct(player, product))
-                                        .item(product.getIcon(container, container.getEmptyElementSlots()[0], player))
+                                        .item(product.getIcon(container, MenuUtils.getNextFreeSlot(container), player))
                                         .build());
                                 continue;
                             }
