@@ -91,7 +91,7 @@ public class BazaarConfig extends CustomConfig {
                 getFarmingProductCategoryConfiguration(Material.CACTUS,
                         "Cactus",
                         getProductConfiguration(Material.CACTUS, "Cactus"),
-                        getProductConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 3), "Cactus Green")),
+                        getProductConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 2), "Cactus Green")),
                 getFarmingProductCategoryConfiguration(Material.SUGAR_CANE,
                         "Sugar Cane",
                         getProductConfiguration(Material.SUGAR_CANE, "Sugar Cane"),
