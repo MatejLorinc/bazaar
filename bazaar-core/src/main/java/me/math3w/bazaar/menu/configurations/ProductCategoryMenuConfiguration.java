@@ -101,7 +101,7 @@ public class ProductCategoryMenuConfiguration extends MenuConfiguration {
 
                 gui.setElement(slot, Component.element()
                         .click(element -> bazaarApi.getBazaar().openProduct(player, product))
-                        .item(product.getIcon())
+                        .item(product.getIcon(gui, slot, player))
                         .build());
             }
         }).build();

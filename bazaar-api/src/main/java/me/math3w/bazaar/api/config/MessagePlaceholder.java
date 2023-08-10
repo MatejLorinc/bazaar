@@ -1,6 +1,6 @@
 package me.math3w.bazaar.api.config;
 
-public final class MessagePlaceholder {
+public final class MessagePlaceholder implements Placeholder {
     private final String placeholder;
     private final String value;
 
@@ -15,5 +15,9 @@ public final class MessagePlaceholder {
 
     public String getValue() {
         return value;
+    }
+
+    public String replace(String text) {
+        return text.replaceAll("%" + placeholder + "%", value);
     }
 }

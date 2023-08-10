@@ -77,7 +77,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         clickActionManager = new DefaultClickActionManager(this);
         itemPlaceholders = new DefaultItemPlaceholders(this);
 
-        menuHistory = new DefaultMenuHistory();
+        menuHistory = new DefaultMenuHistory(this);
 
         orderManager = new SQLOrderManager(this);
 
@@ -126,7 +126,13 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         return orderManager;
     }
 
+    @Override
     public MenuHistory getMenuHistory() {
         return menuHistory;
+    }
+
+    @Override
+    public JavaPlugin getPlugin() {
+        return this;
     }
 }

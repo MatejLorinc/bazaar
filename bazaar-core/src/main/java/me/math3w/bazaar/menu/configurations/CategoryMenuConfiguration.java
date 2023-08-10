@@ -143,7 +143,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
                                 Product product = products.get(0);
                                 container.appendElement(Component.element()
                                         .click(element -> bazaar.openProduct(player, product))
-                                        .item(product.getIcon())
+                                        .item(product.getIcon(container, container.getEmptyElementSlots()[0], player))
                                         .build());
                                 continue;
                             }

@@ -11,11 +11,8 @@ import me.math3w.bazaar.api.menu.ItemPlaceholders;
 import me.math3w.bazaar.api.menu.MenuInfo;
 import me.math3w.bazaar.utils.MenuUtils;
 import me.math3w.bazaar.utils.Utils;
-import me.zort.containr.Component;
 import me.zort.containr.ContainerComponent;
-import me.zort.containr.Element;
-import me.zort.containr.GUIRepository;
-import org.bukkit.Bukkit;
+import me.zort.containr.internal.util.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,70 +33,57 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
 
         MenuConfig menuConfig = bazaarPlugin.getMenuConfig();
 
-        addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
-            ItemStack newItem = item.clone();
-            ItemMeta itemMeta = newItem.getItemMeta();
+        addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> replaceMultiLinePlaceholder(menuConfig,
+                containerComponent,
+                item,
+                itemSlot,
+                player,
+                "sell-inventory",
+                CompletableFuture.supplyAsync(() -> {
+                    Map<Product, Integer> productsInInventory = bazaarPlugin.getBazaar().getProductsInInventory(player);
+                    if (productsInInventory.isEmpty()) return new ArrayList<>();
 
-            if (itemMeta == null || !itemMeta.hasLore()) return item;
+                    List<String> lore = menuConfig.getStringList("sell-inventory");
 
-            List<String> lore = new ArrayList<>(itemMeta.getLore());
+                    double totalEarnedCoins = 0;
 
-            String placeholder = "sell-inventory";
+                    int itemsLineIndex = getPlaceholderLoreLineIndex(lore, "items");
+                    lore.remove(itemsLineIndex);
 
-            int sellInventoryLineIndex = getPlaceholderLoreLineIndex(lore, placeholder);
-            if (sellInventoryLineIndex == -1) return item;
+                    int currentItemIndex = 0;
+                    for (Map.Entry<Product, Integer> productAmountEntry : productsInInventory.entrySet()) {
+                        Product product = productAmountEntry.getKey();
+                        int playerAmount = productAmountEntry.getValue();
 
-            lore.remove(sellInventoryLineIndex);
+                        Pair<Double, Integer> sellPriceWithOrderableAmount = product.getSellPriceWithOrderableAmount(playerAmount).join();
+                        double totalItemPrice = sellPriceWithOrderableAmount.getKey();
+                        int amount = sellPriceWithOrderableAmount.getValue();
 
-            Map<Product, Integer> productsInInventory = bazaarPlugin.getBazaar().getProductsInInventory(player);
+                        List<String> itemAsLore = menuConfig.getStringList("item",
+                                new MessagePlaceholder("item-amount", String.valueOf(amount)),
+                                new MessagePlaceholder("item-name", product.getName()),
+                                new MessagePlaceholder("item-coins", Utils.getTextPrice(totalItemPrice)));
 
-            if (productsInInventory.isEmpty()) {
-                String noneItemsPlaceholder = "sell-inventory-none";
-                lore.add(sellInventoryLineIndex, "%" + noneItemsPlaceholder + "%");
-                itemMeta.setLore(lore);
-                newItem.setItemMeta(itemMeta);
-                return menuConfig.replaceLorePlaceholders(newItem, noneItemsPlaceholder);
-            }
+                        for (int j = 0; j < itemAsLore.size(); j++) {
+                            String loreLine = itemAsLore.get(j);
+                            lore.add(itemsLineIndex + currentItemIndex + j, loreLine);
+                        }
 
-            newItem = menuConfig.replaceLorePlaceholders(newItem, placeholder);
-            itemMeta = newItem.getItemMeta();
-            lore = new ArrayList<>(itemMeta.getLore());
+                        currentItemIndex += itemAsLore.size();
 
-            double totalEarnedCoins = 0;
+                        totalEarnedCoins += totalItemPrice;
+                    }
 
-            int itemsLineIndex = getPlaceholderLoreLineIndex(lore, "items");
-            lore.remove(itemsLineIndex);
+                    for (int i = 0; i < lore.size(); i++) {
+                        String line = lore.get(i);
+                        line = Utils.colorize(line.replaceAll("%earned-coins%", Utils.getTextPrice(totalEarnedCoins)));
+                        lore.set(i, line);
+                    }
 
-            int i = 0;
-            for (Map.Entry<Product, Integer> productAmountEntry : productsInInventory.entrySet()) {
-                Product product = productAmountEntry.getKey();
-                int amount = productAmountEntry.getValue();
-
-                //TODO Need to check if there's enough stock to sell
-
-                double totalItemPrice = amount * product.getHighestSellPrice(); //TODO This needs to calculate real price from buy orders
-                List<String> itemAsLore = menuConfig.getStringList("item",
-                        new MessagePlaceholder("item-amount", String.valueOf(amount)),
-                        new MessagePlaceholder("item-name", product.getName()),
-                        new MessagePlaceholder("item-coins", Utils.getTextPrice(totalItemPrice)));
-
-                for (int j = 0; j < itemAsLore.size(); j++) {
-                    String loreLine = itemAsLore.get(j);
-                    lore.add(itemsLineIndex + i + j, loreLine);
-                }
-
-                i += itemAsLore.size();
-
-                totalEarnedCoins += totalItemPrice;
-            }
-
-            itemMeta.setLore(lore);
-            newItem.setItemMeta(itemMeta);
-
-            newItem = MenuUtils.replaceLorePlaceholders(newItem, new MessagePlaceholder("earned-coins", Utils.getTextPrice(totalEarnedCoins)));
-
-            return newItem;
-        });
+                    return lore;
+                }),
+                "loading",
+                "sell-inventory-none"));
 
         addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
             if (info instanceof Product) {
@@ -118,8 +102,22 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
             Product product = (Product) info;
             return menuConfig.replaceLorePlaceholders(item,
                     "buy-instantly",
-                    new MessagePlaceholder("buy-price", Utils.getTextPrice(product.getLowestBuyPrice())),
-                    new MessagePlaceholder("stack-buy-price", Utils.getTextPrice(product.getLowestBuyPrice() * 64))); //TODO Calculate real price from current stock
+                    new LazyLorePlaceholder(bazaarPlugin,
+                            containerComponent,
+                            item,
+                            itemSlot,
+                            player,
+                            "buy-price",
+                            product.getLowestBuyPrice().thenApply(Utils::getTextPrice),
+                            menuConfig.getString("loading")),
+                    new LazyLorePlaceholder(bazaarPlugin,
+                            containerComponent,
+                            item,
+                            itemSlot,
+                            player,
+                            "stack-buy-price",
+                            product.getLowestBuyPrice().thenApply(price -> Utils.getTextPrice(price * 64)),
+                            menuConfig.getString("loading")));
         });
 
         addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
@@ -128,7 +126,14 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
             return menuConfig.replaceLorePlaceholders(item,
                     "sell-instantly",
                     new MessagePlaceholder("item-amount", Utils.getTextPrice(bazaarPlugin.getBazaar().getProductAmountInInventory(product, player))),
-                    new MessagePlaceholder("coins", Utils.getTextPrice(product.getHighestSellPrice())));
+                    new LazyLorePlaceholder(bazaarPlugin,
+                            containerComponent,
+                            item,
+                            itemSlot,
+                            player,
+                            "coins",
+                            product.getHighestSellPrice().thenApply(Utils::getTextPrice),
+                            menuConfig.getString("loading")));
         });
 
         addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
@@ -148,7 +153,7 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
                                             new MessagePlaceholder("amount", String.valueOf(order.getAmount())),
                                             new MessagePlaceholder("orders", String.valueOf(order.getOrderAmount()))).stream())
                                     .collect(Collectors.toList())),
-                    "buy-order-loading",
+                    "loading",
                     "buy-order-none");
         });
 
@@ -169,7 +174,7 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
                                             new MessagePlaceholder("amount", String.valueOf(order.getAmount())),
                                             new MessagePlaceholder("offers", String.valueOf(order.getOrderAmount()))).stream())
                                     .collect(Collectors.toList())),
-                    "sell-offer-loading",
+                    "loading",
                     "sell-offer-none");
         });
     }
@@ -241,18 +246,7 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
             itemMeta.setLore(lore);
             newItem.setItemMeta(itemMeta);
 
-            for (Map.Entry<Integer, Element> slotElementEntry : container.content(null).entrySet()) {
-                int slot = slotElementEntry.getKey();
-                Element element = slotElementEntry.getValue();
-
-                if (slot != itemSlot) continue;
-
-                Bukkit.getScheduler().runTaskLater(bazaarPlugin, () -> {
-                    container.setElement(itemSlot, Component.element(newItem).click(element::click).build());
-                    GUIRepository.reopenCurrent(player);
-                }, 5);
-                break;
-            }
+            MenuUtils.updateGuiItem(bazaarPlugin.getMenuHistory(), container, itemSlot, player, newItem);
         });
 
         return newItem;

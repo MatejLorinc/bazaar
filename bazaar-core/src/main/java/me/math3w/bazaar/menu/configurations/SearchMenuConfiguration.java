@@ -56,7 +56,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                         for (Product product : products) {
                             container.appendElement(Component.element()
                                     .click(element -> bazaar.openProduct(player, product))
-                                    .item(product.getIcon())
+                                    .item(product.getIcon(container, container.getEmptyElementSlots()[0], player))
                                     .build());
                         }
                     })

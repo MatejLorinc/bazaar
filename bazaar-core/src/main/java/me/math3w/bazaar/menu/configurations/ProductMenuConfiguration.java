@@ -126,7 +126,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                     gui.setElement(productSlot, Component.element()
                             .click(element -> {
                             })
-                            .item(product.getIcon())
+                            .item(product.getIcon(gui, productSlot, player))
                             .build());
                 }).build();
     }

@@ -1,11 +1,20 @@
 package me.math3w.bazaar.bazaar.product;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
+import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
+import me.math3w.bazaar.menu.LazyLorePlaceholder;
 import me.math3w.bazaar.utils.Utils;
+import me.zort.containr.ContainerComponent;
 import me.zort.containr.internal.util.ItemBuilder;
+import me.zort.containr.internal.util.Pair;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ProductImpl implements Product {
     private final ProductCategory productCategory;
@@ -28,11 +37,28 @@ public class ProductImpl implements Product {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return productCategory.getCategory().getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(config.getIcon(),
+    public ItemStack getIcon(ContainerComponent container, int itemSlot, Player player) {
+        BazaarAPI bazaarApi = getBazaarApi();
+        ItemStack icon = config.getIcon();
+
+        return bazaarApi.getMenuConfig().replaceLorePlaceholders(icon,
                 "product-lore",
-                new MessagePlaceholder("buy-price", Utils.getTextPrice(getLowestBuyPrice())),
-                new MessagePlaceholder("sell-price", Utils.getTextPrice(getHighestSellPrice())));
+                new LazyLorePlaceholder(bazaarApi,
+                        container,
+                        icon,
+                        itemSlot,
+                        player,
+                        "buy-price",
+                        getLowestBuyPrice().thenApply(Utils::getTextPrice),
+                        bazaarApi.getMenuConfig().getString("loading")),
+                new LazyLorePlaceholder(bazaarApi,
+                        container,
+                        icon,
+                        itemSlot,
+                        player,
+                        "sell-price",
+                        getHighestSellPrice().thenApply(Utils::getTextPrice),
+                        bazaarApi.getMenuConfig().getString("loading")));
     }
 
     @Override
@@ -43,7 +69,7 @@ public class ProductImpl implements Product {
 
     @Override
     public ItemStack getConfirmationIcon(double unitPrice, int amount) {
-        return productCategory.getCategory().getBazaar().getBazaarApi().getMenuConfig().replaceLorePlaceholders(
+        return getBazaarApi().getMenuConfig().replaceLorePlaceholders(
                 ItemBuilder.newBuilder(config.getItem()).appendLore("%confirm-lore%").build(),
                 "confirm-lore",
                 new MessagePlaceholder("unit-price", Utils.getTextPrice(unitPrice)),
@@ -74,12 +100,44 @@ public class ProductImpl implements Product {
     }
 
     @Override
-    public double getLowestBuyPrice() {
-        return 0;
+    public CompletableFuture<Double> getLowestBuyPrice() {
+        return getPrice(OrderType.SELL);
     }
 
     @Override
-    public double getHighestSellPrice() {
-        return 0;
+    public CompletableFuture<Double> getHighestSellPrice() {
+        return getPrice(OrderType.BUY);
+    }
+
+    private CompletableFuture<Double> getPrice(OrderType orderType) {
+        return getBazaarApi().getOrderManager().getOrders(this, orderType, orders -> false).thenApply(orders -> orders.isEmpty() ? 0 : orders.get(0).getUnitPrice());
+    }
+
+    @Override
+    public CompletableFuture<Pair<Double, Integer>> getBuyPriceWithOrderableAmount(int amount) {
+        return getPriceWithOrderableAmount(OrderType.SELL, amount);
+    }
+
+    @Override
+    public CompletableFuture<Pair<Double, Integer>> getSellPriceWithOrderableAmount(int amount) {
+        return getPriceWithOrderableAmount(OrderType.BUY, amount);
+    }
+
+    private CompletableFuture<Pair<Double, Integer>> getPriceWithOrderableAmount(OrderType orderType, int amount) {
+        return getBazaarApi().getOrderManager().getOrders(this, orderType, orders -> orders.stream().map(BazaarOrder::getAmount).count() < amount)
+                .thenApply(orders -> {
+                    double price = 0;
+                    int itemAmount = 0;
+                    for (BazaarOrder order : orders) {
+                        price += order.getUnitPrice() * order.getAmount();
+                        itemAmount += order.getAmount();
+                    }
+                    return new Pair<>(price, Math.min(itemAmount, amount));
+                });
+    }
+
+
+    private BazaarAPI getBazaarApi() {
+        return productCategory.getCategory().getBazaar().getBazaarApi();
     }
 }
