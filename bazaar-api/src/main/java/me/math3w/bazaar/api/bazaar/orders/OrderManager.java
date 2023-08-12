@@ -10,9 +10,13 @@ import java.util.function.Predicate;
 public interface OrderManager {
     BazaarOrder prepareBazaarOrder(Product product, int amount, double unitPrice, OrderType type, UUID player);
 
+    int claimOrder(BazaarOrder order);
+
     CompletableFuture<SubmitResult> submitBazaarOrder(BazaarOrder order);
 
     CompletableFuture<List<BazaarOrder>> getOrders(Product product, OrderType type, Predicate<List<BazaarOrder>> shouldContinuePredicate);
 
     CompletableFuture<List<CompressedBazaarOrder>> getCompressedOrders(Product product, OrderType orderType, int limit);
+
+    CompletableFuture<List<BazaarOrder>> getUnclaimedOrders(UUID playerUniqueId);
 }

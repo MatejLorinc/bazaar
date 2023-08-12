@@ -4,12 +4,13 @@ import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
 import me.math3w.bazaar.api.bazaar.orders.SubmitResult;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class SellOrderSubmitter implements OrderSubmitter {
+public class SellOrderService implements OrderService {
     @Override
     public SubmitResult submit(BazaarOrder order) {
 
@@ -50,5 +51,16 @@ public class SellOrderSubmitter implements OrderSubmitter {
                 return;
             }
         }
+    }
+
+    @Override
+    public int claim(BazaarOrder order) {
+        Player player = Bukkit.getPlayer(order.getPlayer());
+        Economy economy = order.getProduct().getProductCategory().getCategory().getBazaar().getBazaarApi().getEconomy();
+        double availableCoins = order.getAvailableCoins();
+
+        economy.depositPlayer(player, availableCoins);
+
+        return order.getAvailableItems();
     }
 }

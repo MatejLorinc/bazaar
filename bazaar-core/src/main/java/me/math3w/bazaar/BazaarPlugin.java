@@ -50,6 +50,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         ConfigurationSerialization.registerClass(SearchMenuConfiguration.class);
         ConfigurationSerialization.registerClass(ProductMenuConfiguration.class);
         ConfigurationSerialization.registerClass(ConfirmationMenuConfiguration.class);
+        ConfigurationSerialization.registerClass(OrdersMenuConfiguration.class);
     }
 
     @Override

@@ -64,7 +64,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                     .build();
 
             gui.setContainer(11, productCategoriesContainer);
-            CategoryMenuConfiguration.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player);
+            MenuUtils.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player, 48, 51);
         }).build();
     }
 

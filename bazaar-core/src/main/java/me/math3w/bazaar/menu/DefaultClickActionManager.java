@@ -72,6 +72,10 @@ public class DefaultClickActionManager implements ClickActionManager {
             bazaarPlugin.getOrderManager().submitBazaarOrder(order);
             clickInfo.close();
         });
+
+        addClickAction("manage-orders", clickInfo -> {
+            bazaarPlugin.getBazaar().openOrders(clickInfo.getPlayer());
+        });
     }
 
     @Override

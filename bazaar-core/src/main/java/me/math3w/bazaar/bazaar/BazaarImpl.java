@@ -44,6 +44,11 @@ public class BazaarImpl implements Bazaar {
     }
 
     @Override
+    public void openOrders(Player player) {
+        bazaarPlugin.getBazaarConfig().getOrdersMenuConfiguration().getMenu(getBazaarApi()).open(player);
+    }
+
+    @Override
     public void openProduct(Player player, Product product) {
         bazaarPlugin.getBazaarConfig().getProductMenuConfiguration().getMenu(product).open(player);
     }
@@ -61,6 +66,11 @@ public class BazaarImpl implements Bazaar {
     @Override
     public BazaarAPI getBazaarApi() {
         return bazaarPlugin;
+    }
+
+    @Override
+    public Product getProduct(String id) {
+        return getProducts(product -> product.getId().equals(id)).stream().findAny().orElse(null);
     }
 
     @Override

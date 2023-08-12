@@ -1,7 +1,12 @@
 package me.math3w.bazaar.utils;
 
+import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.menu.MenuHistory;
+import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.*;
+import me.zort.containr.internal.util.Items;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,5 +56,37 @@ public class MenuUtils {
             slot++;
         }
         return slot;
+    }
+
+    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer container, BazaarAPI bazaarApi, Player player, int previousSlot, int nextSlot) {
+        if (container.getCurrentPageIndex() > 0) {
+            gui.setElement(previousSlot, Component.element()
+                    .click(info -> {
+                        container.previousPage();
+                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot);
+                        gui.update(info.getPlayer());
+                    })
+                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Previous page"))
+                    .build());
+        } else {
+            menuConfiguration.getItems().stream().filter(item -> item.getSlot() == previousSlot).findAny().ifPresent(glassItem -> {
+                glassItem.setItem(gui, bazaarApi, player, null);
+            });
+        }
+
+        if (container.getCurrentPageIndex() < container.getMaxPageIndex()) {
+            gui.setElement(nextSlot, Component.element()
+                    .click(info -> {
+                        container.nextPage();
+                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot);
+                        gui.update(info.getPlayer());
+                    })
+                    .item(Items.create(Material.ARROW, ChatColor.GREEN + "Next page"))
+                    .build());
+        } else {
+            menuConfiguration.getItems().stream().filter(item -> item.getSlot() == nextSlot).findAny().ifPresent(glassItem -> {
+                glassItem.setItem(gui, bazaarApi, player, null);
+            });
+        }
     }
 }

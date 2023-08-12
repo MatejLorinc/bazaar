@@ -74,6 +74,19 @@ public class SQLOrderManager extends AbstractOrderManager {
     }
 
     @Override
+    protected CompletableFuture<Void> registerClaim(BazaarOrder order, int claimed) {
+        return CompletableFuture.runAsync(() -> {
+            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("UPDATE orders SET claimed=? WHERE id=?")) {
+                statement.setInt(1, order.getClaimed() + claimed);
+                statement.setInt(2, order.getDatabaseId());
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
     public CompletableFuture<List<BazaarOrder>> getOrders(Product product, OrderType type, Predicate<List<BazaarOrder>> shouldContinuePredicate) {
         return CompletableFuture.supplyAsync(() -> {
             String sortType = type == OrderType.BUY ? "DESC" : "ASC";
@@ -84,7 +97,8 @@ public class SQLOrderManager extends AbstractOrderManager {
                 List<BazaarOrder> orders = new ArrayList<>();
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        orders.add(new DefaultBazaarOrder(product,
+                        orders.add(new DefaultBazaarOrder(resultSet.getInt("id"),
+                                product,
                                 resultSet.getInt("amount"),
                                 resultSet.getDouble("unit_price"),
                                 type,
@@ -95,6 +109,34 @@ public class SQLOrderManager extends AbstractOrderManager {
                         if (!shouldContinuePredicate.test(orders)) {
                             break;
                         }
+                    }
+                }
+
+                return orders;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<List<BazaarOrder>> getUnclaimedOrders(UUID playerUniqueId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("SELECT * FROM orders WHERE player=? AND claimed<amount ORDER BY created_at")) {
+                statement.setString(1, playerUniqueId.toString());
+
+                List<BazaarOrder> orders = new ArrayList<>();
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        orders.add(new DefaultBazaarOrder(resultSet.getInt("id"),
+                                bazaarPlugin.getBazaar().getProduct(resultSet.getString("product_id")),
+                                resultSet.getInt("amount"),
+                                resultSet.getDouble("unit_price"),
+                                OrderType.valueOf(resultSet.getString("order_type")),
+                                playerUniqueId,
+                                resultSet.getInt("filled"),
+                                resultSet.getInt("claimed"),
+                                resultSet.getTimestamp("created_at").toInstant()));
                     }
                 }
 

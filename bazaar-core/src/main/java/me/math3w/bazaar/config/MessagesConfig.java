@@ -35,5 +35,7 @@ public class MessagesConfig extends CustomConfig {
         addDefault("order.buy.not-enough", "&cYou don't have enough coins for this buy order &7[&6%amount%x %product% &7for &6%coins% coins&7]");
         addDefault("order.sell.success", "&7The sell offer &6%amount%x %product% &7for &6%coins% coins &7was placed to the bazaar");
         addDefault("order.sell.not-enough", "&cYou don't have enough items for this sell offer &7[&6%amount%x %product% &7for &6%coins% coins&7]");
+        addDefault("claim.buy", "&7Claimed &a%amount%&7x &f%product% &7worth &6%total-coins% coins &7bought for &6%unit-coins% &7each");
+        addDefault("claim.sell", "&7Claimed &6%total-coins% coins &7from selling &a%amount%&7x &f%product% &7at &6%unit-coins% &7each");
     }
 }

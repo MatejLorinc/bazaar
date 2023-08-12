@@ -41,6 +41,7 @@ public class BazaarConfig extends CustomConfig {
         for (OrderType orderType : OrderType.values()) {
             addDefault("confirm-" + orderType.name().toLowerCase() + "-menu", ConfirmationMenuConfiguration.createDefaultConfirmationConfiguration(orderType));
         }
+        addDefault("orders", OrdersMenuConfiguration.createDefaultConfiguration());
     }
 
     private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
@@ -306,6 +307,10 @@ public class BazaarConfig extends CustomConfig {
 
     public ConfirmationMenuConfiguration getConfirmationMenuConfiguration(OrderType orderType) {
         return (ConfirmationMenuConfiguration) getConfig().get("confirm-" + orderType.name().toLowerCase() + "-menu");
+    }
+
+    public OrdersMenuConfiguration getOrdersMenuConfiguration() {
+        return (OrdersMenuConfiguration) getConfig().get("orders");
     }
 
     public List<CategoryConfiguration> getCategories() {

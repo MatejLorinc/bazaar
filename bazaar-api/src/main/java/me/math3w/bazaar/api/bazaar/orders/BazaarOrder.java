@@ -2,6 +2,7 @@ package me.math3w.bazaar.api.bazaar.orders;
 
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.menu.MenuInfo;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -28,4 +29,12 @@ public interface BazaarOrder extends MenuInfo {
     void claim(int amount);
 
     boolean isSimilar(BazaarOrder other);
+
+    ItemStack getIcon();
+
+    double getAvailableCoins();
+
+    int getAvailableItems();
+
+    int getDatabaseId();
 }

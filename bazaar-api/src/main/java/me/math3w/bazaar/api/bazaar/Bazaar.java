@@ -14,6 +14,8 @@ public interface Bazaar {
 
     void openSearch(Player player, String filter);
 
+    void openOrders(Player player);
+
     void openProduct(Player player, Product product);
 
     List<Category> getCategories();
@@ -21,6 +23,8 @@ public interface Bazaar {
     void saveConfig();
 
     BazaarAPI getBazaarApi();
+
+    Product getProduct(String id);
 
     List<Product> getProducts();
 

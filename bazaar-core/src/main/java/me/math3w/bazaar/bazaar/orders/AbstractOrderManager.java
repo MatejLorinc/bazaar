@@ -4,9 +4,9 @@ import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.*;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
-import me.math3w.bazaar.bazaar.orders.submit.BuyOrderSubmitter;
-import me.math3w.bazaar.bazaar.orders.submit.OrderSubmitter;
-import me.math3w.bazaar.bazaar.orders.submit.SellOrderSubmitter;
+import me.math3w.bazaar.bazaar.orders.submit.BuyOrderService;
+import me.math3w.bazaar.bazaar.orders.submit.OrderService;
+import me.math3w.bazaar.bazaar.orders.submit.SellOrderService;
 import me.math3w.bazaar.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,18 +26,44 @@ public abstract class AbstractOrderManager implements OrderManager {
         this.bazaarPlugin = bazaarPlugin;
     }
 
+    protected static OrderService getOrderService(OrderType type) {
+        return type == OrderType.BUY ? new BuyOrderService() : new SellOrderService();
+    }
+
     @Override
     public BazaarOrder prepareBazaarOrder(Product product, int amount, double unitPrice, OrderType type, UUID player) {
         return new DefaultBazaarOrder(product, amount, BigDecimal.valueOf(unitPrice).setScale(1, RoundingMode.DOWN).doubleValue(), type, player, 0, 0, Instant.now());
     }
 
     @Override
+    public int claimOrder(BazaarOrder order) {
+        Player player = Bukkit.getPlayer(order.getPlayer());
+        OrderType type = order.getType();
+        OrderService orderService = getOrderService(type);
+
+        int claimed = orderService.claim(order);
+
+        if (claimed > 0) {
+            bazaarPlugin.getMessagesConfig().sendMessage(player,
+                    "claim." + type.name().toLowerCase(),
+                    new MessagePlaceholder("amount", String.valueOf(claimed)),
+                    new MessagePlaceholder("total-coins", Utils.getTextPrice(claimed * order.getUnitPrice())),
+                    new MessagePlaceholder("unit-coins", Utils.getTextPrice(order.getUnitPrice())),
+                    new MessagePlaceholder("product", order.getProduct().getName()));
+
+            registerClaim(order, claimed);
+        }
+
+        return claimed;
+    }
+
+    @Override
     public CompletableFuture<SubmitResult> submitBazaarOrder(BazaarOrder order) {
         Player player = Bukkit.getPlayer(order.getPlayer());
         OrderType type = order.getType();
-        OrderSubmitter orderSubmitter = type == OrderType.BUY ? new BuyOrderSubmitter() : new SellOrderSubmitter();
+        OrderService orderService = getOrderService(type);
 
-        SubmitResult result = orderSubmitter.submit(order);
+        SubmitResult result = orderService.submit(order);
         bazaarPlugin.getMessagesConfig().sendMessage(player,
                 result.getMessageId(type),
                 new MessagePlaceholder("amount", String.valueOf(order.getAmount())),
@@ -49,6 +75,8 @@ public abstract class AbstractOrderManager implements OrderManager {
     }
 
     protected abstract CompletableFuture<SubmitResult> registerBazaarOrder(BazaarOrder order);
+
+    protected abstract CompletableFuture<Void> registerClaim(BazaarOrder order, int claimed);
 
     @Override
     public CompletableFuture<List<CompressedBazaarOrder>> getCompressedOrders(Product product, OrderType orderType, int limit) {
