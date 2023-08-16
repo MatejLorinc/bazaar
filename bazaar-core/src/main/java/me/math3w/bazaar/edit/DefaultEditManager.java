@@ -39,7 +39,7 @@ public class DefaultEditManager implements EditManager {
                     ItemStack newItem = ItemBuilder.newBuilder(configurableMenuItem.getItem()).withName(newName).build();
                     configurableMenuItem.setItem(bazaar, newItem);
                 })
-                .addActionEditElement(31, configurableMenuItem)
+                .addActionEditElement(31, configurableMenuItem, bazaar)
                 .addLoreEditElement(messageInputManager, 33, configurableMenuItem.getItem().getItemMeta().getLore(), newLore -> {
                     ItemStack newItem = ItemBuilder.newBuilder(configurableMenuItem.getItem()).withLore(newLore).build();
                     configurableMenuItem.setItem(bazaar, newItem);

@@ -1,5 +1,6 @@
 package me.math3w.bazaar.edit;
 
+import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.api.menu.MenuHistory;
 import me.math3w.bazaar.messageinput.MessageInputManager;
@@ -129,7 +130,7 @@ public class EditMenuBuilder {
                 }).build());
     }
 
-    public EditMenuBuilder addActionEditElement(int slot, ConfigurableMenuItem configurableMenuItem) {
+    public EditMenuBuilder addActionEditElement(int slot, ConfigurableMenuItem configurableMenuItem, Bazaar bazaar) {
         return addElement(slot, Component.element()
                 .item(ItemBuilder.newBuilder(Material.REDSTONE)
                         .withName(ChatColor.GREEN + "Edit Action")
@@ -138,7 +139,22 @@ public class EditMenuBuilder {
                         .appendLore(ChatColor.YELLOW + "Click to edit click action!")
                         .build())
                 .click(clickInfo -> {
-                    //TODO open menu with click actions
+                    Component.gui()
+                            .title("Select Action")
+                            .rows(2)
+                            .prepare((gui, player) -> {
+                                for (String action : bazaar.getBazaarApi().getClickActionManager().getActions()) {
+                                    gui.appendElement(Component.element(ItemBuilder.newBuilder(Material.EMPTY_MAP)
+                                                    .withName(ChatColor.GREEN + (action.isEmpty() ? "none" : action))
+                                                    .appendLore("")
+                                                    .appendLore(ChatColor.YELLOW + "Click to set this action to item!").build())
+                                            .click(actionClickInfo -> {
+                                                configurableMenuItem.setAction(bazaar, action);
+                                                updateMenuPlayerConsumer.accept(player);
+                                            })
+                                            .build());
+                                }
+                            }).build().open(clickInfo.getPlayer());
                 }).build());
     }
 

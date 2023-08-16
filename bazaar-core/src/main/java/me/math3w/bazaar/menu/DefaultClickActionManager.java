@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -84,6 +85,9 @@ public class DefaultClickActionManager implements ClickActionManager {
         addClickAction("manage-orders", clickInfo -> {
             bazaarPlugin.getBazaar().openOrders(clickInfo.getPlayer());
         });
+
+        addClickAction("", clickInfo -> {
+        });
     }
 
     private void addEditClickActions() {
@@ -149,6 +153,11 @@ public class DefaultClickActionManager implements ClickActionManager {
         }
         return clickActions.getOrDefault(configurableMenuItem.getAction(), menuInfo1 -> clickInfo -> {
         }).apply(menuInfo);
+    }
+
+    @Override
+    public Set<String> getActions() {
+        return clickActions.keySet();
     }
 
     private <T extends Number> void requireNumberFromPlayer(Player player, String sign, Consumer<T> callback, Function<String, T> parser) {
