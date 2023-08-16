@@ -17,7 +17,15 @@ public interface Category extends MenuInfo {
 
     List<ProductCategory> getProductCategories();
 
+    void addProductCategory(ProductCategory productCategory);
+
+    void removeProductCategory(ProductCategory productCategory);
+
     GUI getMenu();
+
+    void setTitle(String name);
+
+    GUI getEditMenu();
 
     Bazaar getBazaar();
 }

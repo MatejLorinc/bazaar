@@ -5,6 +5,7 @@ import me.math3w.bazaar.menu.configurations.ProductCategoryMenuConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class ProductCategoryConfiguration implements ConfigurationSerializable {
         this.menuConfig = menuConfig;
         this.icon = icon;
         this.name = name;
-        this.products = products;
+        this.products = new ArrayList<>(products);
     }
 
     public static ProductCategoryConfiguration deserialize(Map<String, Object> args) {

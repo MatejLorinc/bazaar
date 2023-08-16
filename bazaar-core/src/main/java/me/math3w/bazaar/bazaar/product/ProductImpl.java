@@ -62,6 +62,11 @@ public class ProductImpl implements Product {
     }
 
     @Override
+    public ItemStack getRawIcon() {
+        return config.getIcon().clone();
+    }
+
+    @Override
     public void setIcon(ItemStack icon) {
         config.setIcon(icon);
         productCategory.getCategory().getBazaar().saveConfig();
@@ -136,6 +141,9 @@ public class ProductImpl implements Product {
                 });
     }
 
+    public ProductConfiguration getConfig() {
+        return config;
+    }
 
     private BazaarAPI getBazaarApi() {
         return productCategory.getCategory().getBazaar().getBazaarApi();

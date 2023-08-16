@@ -265,14 +265,14 @@ public class BazaarConfig extends CustomConfig {
         return getProductCategoryConfiguration(icon, name, products, ChatColor.LIGHT_PURPLE);
     }
 
-    private ProductCategoryConfiguration getProductCategoryConfiguration(ItemStack icon, String name, ProductConfiguration[] products, ChatColor color) {
+    public ProductCategoryConfiguration getProductCategoryConfiguration(ItemStack icon, String name, ProductConfiguration[] products, ChatColor color) {
         return new ProductCategoryConfiguration(ProductCategoryMenuConfiguration.createDefaultProductCategoryConfiguration(name, products.length),
                 getDefaultProductCategoryIcon(icon, color + name),
                 name,
                 Arrays.asList(products));
     }
 
-    private ProductConfiguration getProductConfiguration(ItemStack item, String name) {
+    public ProductConfiguration getProductConfiguration(ItemStack item, String name) {
         return new ProductConfiguration(item,
                 ItemBuilder.newBuilder(item)
                         .appendLore("")
@@ -283,10 +283,9 @@ public class BazaarConfig extends CustomConfig {
                 name);
     }
 
-    private ProductConfiguration getProductConfiguration(Material material, String name) {
+    public ProductConfiguration getProductConfiguration(Material material, String name) {
         return getProductConfiguration(new ItemStack(material), name);
     }
-
 
     private ItemStack getDefaultProductCategoryIcon(ItemStack icon, String name) {
         return ItemBuilder.newBuilder(icon)

@@ -1,5 +1,7 @@
 package me.math3w.bazaar.utils;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -31,5 +33,11 @@ public class Utils {
 
     public static String getTextPrice(double price) {
         return new DecimalFormat("#.#").format(price);
+    }
+
+    public static TextComponent createClickableText(String text, String command) {
+        TextComponent component = new TextComponent(text);
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + command));
+        return component;
     }
 }

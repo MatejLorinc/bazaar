@@ -4,6 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.orders.OrderManager;
 import me.math3w.bazaar.api.config.MenuConfig;
+import me.math3w.bazaar.api.edit.EditManager;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.api.menu.ItemPlaceholders;
 import me.math3w.bazaar.api.menu.MenuHistory;
@@ -18,8 +19,10 @@ import me.math3w.bazaar.config.BazaarConfig;
 import me.math3w.bazaar.config.DatabaseConfig;
 import me.math3w.bazaar.config.DefaultMenuConfig;
 import me.math3w.bazaar.config.MessagesConfig;
+import me.math3w.bazaar.edit.DefaultEditManager;
 import me.math3w.bazaar.menu.*;
 import me.math3w.bazaar.menu.configurations.*;
+import me.math3w.bazaar.messageinput.MessageInputManager;
 import me.zort.containr.Containr;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -38,13 +41,15 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     private ItemPlaceholders itemPlaceholders;
     private MenuHistory menuHistory;
     private OrderManager orderManager;
+    private EditManager editManager;
+    private MessageInputManager messageInputManager;
 
     @Override
     public void onLoad() {
         ConfigurationSerialization.registerClass(ProductConfiguration.class);
         ConfigurationSerialization.registerClass(ProductCategoryConfiguration.class);
         ConfigurationSerialization.registerClass(CategoryConfiguration.class);
-        ConfigurationSerialization.registerClass(ConfigurableMenuItem.class);
+        ConfigurationSerialization.registerClass(DefaultConfigurableMenuItem.class);
         ConfigurationSerialization.registerClass(CategoryMenuConfiguration.class);
         ConfigurationSerialization.registerClass(ProductCategoryMenuConfiguration.class);
         ConfigurationSerialization.registerClass(SearchMenuConfiguration.class);
@@ -71,7 +76,7 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         databaseConfig = new DatabaseConfig(this);
 
         getCommand("bazaar").setExecutor(new BazaarCommand(this));
-        getCommand("bazaaredit").setExecutor(new EditCommand());
+        getCommand("bazaaredit").setExecutor(new EditCommand(this));
 
         bazaar = new BazaarImpl(this);
 
@@ -81,6 +86,10 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
         menuHistory = new DefaultMenuHistory(this);
 
         orderManager = new SQLOrderManager(this);
+
+        editManager = new DefaultEditManager(this);
+
+        messageInputManager = new MessageInputManager(this);
 
         Bukkit.getPluginManager().registerEvents(new MenuListeners(this), this);
     }
@@ -130,6 +139,15 @@ public class BazaarPlugin extends JavaPlugin implements BazaarAPI {
     @Override
     public MenuHistory getMenuHistory() {
         return menuHistory;
+    }
+
+    @Override
+    public EditManager getEditManager() {
+        return editManager;
+    }
+
+    public MessageInputManager getMessageInputManager() {
+        return messageInputManager;
     }
 
     @Override

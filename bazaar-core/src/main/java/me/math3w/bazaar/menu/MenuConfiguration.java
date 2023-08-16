@@ -1,6 +1,7 @@
 package me.math3w.bazaar.menu;
 
 import me.math3w.bazaar.api.BazaarAPI;
+import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.menu.MenuInfo;
 import me.zort.containr.Component;
 import me.zort.containr.ContainerComponent;
@@ -17,22 +18,22 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class MenuConfiguration implements ConfigurationSerializable {
-    protected final String name;
     protected final int rows;
-    protected final List<ConfigurableMenuItem> items;
+    protected final List<DefaultConfigurableMenuItem> items;
+    protected String name;
 
-    public MenuConfiguration(String name, int rows, List<ConfigurableMenuItem> items) {
+    public MenuConfiguration(String name, int rows, List<DefaultConfigurableMenuItem> items) {
         this.name = name;
         this.rows = rows;
         this.items = items;
     }
 
-    public static void fillWithGlass(int rows, List<ConfigurableMenuItem> items) {
+    public static void fillWithGlass(int rows, List<DefaultConfigurableMenuItem> items) {
         ItemStack glass = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 15).withName(ChatColor.WHITE.toString()).build();
         for (int i = 0; i < rows * 9; i++) {
             int finalI = i;
             if (items.stream().anyMatch(configurableMenuItem -> configurableMenuItem.getSlot() == finalI)) continue;
-            items.add(new ConfigurableMenuItem(i, glass, ""));
+            items.add(new DefaultConfigurableMenuItem(i, glass, ""));
         }
     }
 
@@ -59,13 +60,18 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
         return rows;
     }
 
-    public List<ConfigurableMenuItem> getItems() {
+    public List<DefaultConfigurableMenuItem> getItems() {
         return items;
     }
 
-    protected void loadItems(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player, MenuInfo info) {
-        for (ConfigurableMenuItem item : items) {
-            item.setItem(containerComponent, bazaarApi, player, info);
+    public void setName(Bazaar bazaar, String name) {
+        this.name = name;
+        bazaar.saveConfig();
+    }
+
+    protected void loadItems(ContainerComponent containerComponent, BazaarAPI bazaarApi, Player player, MenuInfo info, boolean edit) {
+        for (DefaultConfigurableMenuItem item : items) {
+            item.putItem(containerComponent, bazaarApi, player, info, edit);
         }
     }
 }

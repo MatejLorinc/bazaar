@@ -39,6 +39,11 @@ public class ProductCategoryImpl implements ProductCategory {
     }
 
     @Override
+    public ItemStack getRawIcon() {
+        return config.getIcon().clone();
+    }
+
+    @Override
     public String getName() {
         return Utils.colorize(config.getName());
     }
@@ -55,12 +60,35 @@ public class ProductCategoryImpl implements ProductCategory {
     }
 
     @Override
+    public void addProduct(Product product) {
+        config.getProducts().add(((ProductImpl) product).getConfig());
+        products.add(product);
+        category.getBazaar().saveConfig();
+    }
+
+    @Override
+    public void removeProduct(Product product) {
+        config.getProducts().remove(((ProductImpl) product).getConfig());
+        products.remove(product);
+        category.getBazaar().saveConfig();
+    }
+
+    @Override
     public GUI getMenu() {
-        return config.getMenuConfig().getMenu(this);
+        return config.getMenuConfig().getMenu(this, false);
+    }
+
+    @Override
+    public GUI getEditMenu() {
+        return config.getMenuConfig().getMenu(this, true);
     }
 
     @Override
     public Category getCategory() {
         return category;
+    }
+
+    public ProductCategoryConfiguration getConfig() {
+        return config;
     }
 }

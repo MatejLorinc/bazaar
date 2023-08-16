@@ -4,6 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.menu.MenuHistory;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.*;
+import me.zort.containr.internal.util.ItemBuilder;
 import me.zort.containr.internal.util.Items;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class MenuUtils {
@@ -58,19 +61,19 @@ public class MenuUtils {
         return slot;
     }
 
-    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer container, BazaarAPI bazaarApi, Player player, int previousSlot, int nextSlot) {
+    public static void setPagingArrows(MenuConfiguration menuConfiguration, GUI gui, PagedContainer container, BazaarAPI bazaarApi, Player player, int previousSlot, int nextSlot, boolean edit) {
         if (container.getCurrentPageIndex() > 0) {
             gui.setElement(previousSlot, Component.element()
                     .click(info -> {
                         container.previousPage();
-                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot);
+                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot, edit);
                         gui.update(info.getPlayer());
                     })
                     .item(Items.create(Material.ARROW, ChatColor.GREEN + "Previous page"))
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == previousSlot).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, bazaarApi, player, null);
+                glassItem.putItem(gui, bazaarApi, player, null, edit);
             });
         }
 
@@ -78,15 +81,32 @@ public class MenuUtils {
             gui.setElement(nextSlot, Component.element()
                     .click(info -> {
                         container.nextPage();
-                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot);
+                        setPagingArrows(menuConfiguration, gui, container, bazaarApi, player, previousSlot, nextSlot, edit);
                         gui.update(info.getPlayer());
                     })
                     .item(Items.create(Material.ARROW, ChatColor.GREEN + "Next page"))
                     .build());
         } else {
             menuConfiguration.getItems().stream().filter(item -> item.getSlot() == nextSlot).findAny().ifPresent(glassItem -> {
-                glassItem.setItem(gui, bazaarApi, player, null);
+                glassItem.putItem(gui, bazaarApi, player, null, edit);
             });
         }
+    }
+
+    public static ItemStack getPlusSkull(String name) {
+        return Items.createSkull(name, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjBiNTVmNzQ2ODFjNjgyODNhMWMxY2U1MWYxYzgzYjUyZTI5NzFjOTFlZTM0ZWZjYjU5OGRmMzk5MGE3ZTcifX19");
+    }
+
+    public static ItemStack appendEditLore(ItemStack item, boolean shouldAppend) {
+        return appendEditLore(item, shouldAppend, false);
+    }
+
+    public static ItemStack appendEditLore(ItemStack item, boolean shouldAppend, boolean removable) {
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.AQUA + "Right-Click to edit!");
+        if (removable) {
+            lore.add(ChatColor.DARK_AQUA + "Middle-Click to remove!");
+        }
+        return shouldAppend ? ItemBuilder.newBuilder(item).appendLore(lore).build() : item;
     }
 }

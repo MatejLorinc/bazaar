@@ -1,6 +1,7 @@
 package me.math3w.bazaar.api.bazaar;
 
 import me.math3w.bazaar.api.BazaarAPI;
+import me.math3w.bazaar.api.menu.ConfigurableMenuItem;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -12,11 +13,19 @@ public interface Bazaar {
 
     void open(Player player, Category category);
 
+    void openEdit(Player player, Category category);
+
     void openSearch(Player player, String filter);
+
+    void openEditSearch(Player player, String filter, ConfigurableMenuItem searchItem);
 
     void openOrders(Player player);
 
+    void openEditOrders(Player player);
+
     void openProduct(Player player, Product product);
+
+    void openProductEdit(Player player, Product product);
 
     List<Category> getCategories();
 

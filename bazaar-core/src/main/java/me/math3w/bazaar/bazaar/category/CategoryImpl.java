@@ -53,8 +53,32 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    public void addProductCategory(ProductCategory productCategory) {
+        config.getProductCategories().add(((ProductCategoryImpl) productCategory).getConfig());
+        productCategories.add(productCategory);
+        bazaar.saveConfig();
+    }
+
+    @Override
+    public void removeProductCategory(ProductCategory productCategory) {
+        config.getProductCategories().remove(((ProductCategoryImpl) productCategory).getConfig());
+        productCategories.remove(productCategory);
+        bazaar.saveConfig();
+    }
+
+    @Override
     public GUI getMenu() {
-        return config.getMenuConfig().getMenu(this);
+        return config.getMenuConfig().getMenu(this, false);
+    }
+
+    @Override
+    public void setTitle(String name) {
+        config.getMenuConfig().setName(bazaar, name);
+    }
+
+    @Override
+    public GUI getEditMenu() {
+        return config.getMenuConfig().getMenu(this, true);
     }
 
     @Override

@@ -13,8 +13,9 @@ public interface Product extends MenuInfo {
 
     void setItem(ItemStack item);
 
-
     ItemStack getIcon(ContainerComponent container, int itemSlot, Player player);
+
+    ItemStack getRawIcon();
 
     void setIcon(ItemStack icon);
 

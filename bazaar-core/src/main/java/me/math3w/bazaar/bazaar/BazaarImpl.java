@@ -6,6 +6,7 @@ import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.ProductCategory;
+import me.math3w.bazaar.api.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.bazaar.category.CategoryImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -39,18 +40,38 @@ public class BazaarImpl implements Bazaar {
     }
 
     @Override
+    public void openEdit(Player player, Category category) {
+        category.getEditMenu().open(player);
+    }
+
+    @Override
     public void openSearch(Player player, String filter) {
-        bazaarPlugin.getBazaarConfig().getSearchMenuConfiguration().getMenu(this, filter).open(player);
+        bazaarPlugin.getBazaarConfig().getSearchMenuConfiguration().getMenu(this, filter, false).open(player);
+    }
+
+    @Override
+    public void openEditSearch(Player player, String filter, ConfigurableMenuItem searchItem) {
+        bazaarPlugin.getBazaarConfig().getSearchMenuConfiguration().getMenu(this, "", true).open(player);
     }
 
     @Override
     public void openOrders(Player player) {
-        bazaarPlugin.getBazaarConfig().getOrdersMenuConfiguration().getMenu(getBazaarApi()).open(player);
+        bazaarPlugin.getBazaarConfig().getOrdersMenuConfiguration().getMenu(getBazaarApi(), false).open(player);
+    }
+
+    @Override
+    public void openEditOrders(Player player) {
+        bazaarPlugin.getBazaarConfig().getOrdersMenuConfiguration().getMenu(getBazaarApi(), true).open(player);
     }
 
     @Override
     public void openProduct(Player player, Product product) {
-        bazaarPlugin.getBazaarConfig().getProductMenuConfiguration().getMenu(product).open(player);
+        bazaarPlugin.getBazaarConfig().getProductMenuConfiguration().getMenu(product, false).open(player);
+    }
+
+    @Override
+    public void openProductEdit(Player player, Product product) {
+        bazaarPlugin.getBazaarConfig().getProductMenuConfiguration().getMenu(product, true).open(player);
     }
 
     @Override

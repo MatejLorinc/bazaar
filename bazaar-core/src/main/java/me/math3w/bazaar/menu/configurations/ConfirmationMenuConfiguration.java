@@ -4,7 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
 import me.math3w.bazaar.api.bazaar.orders.OrderType;
-import me.math3w.bazaar.menu.ConfigurableMenuItem;
+import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
@@ -19,15 +19,15 @@ import java.util.Map;
 public class ConfirmationMenuConfiguration extends MenuConfiguration {
     private final int productSlot;
 
-    public ConfirmationMenuConfiguration(String name, int rows, List<ConfigurableMenuItem> items, int productSlot) {
+    public ConfirmationMenuConfiguration(String name, int rows, List<DefaultConfigurableMenuItem> items, int productSlot) {
         super(name, rows, items);
         this.productSlot = productSlot;
     }
 
     public static ConfirmationMenuConfiguration createDefaultConfirmationConfiguration(OrderType type) {
-        List<ConfigurableMenuItem> items = new ArrayList<>();
+        List<DefaultConfigurableMenuItem> items = new ArrayList<>();
 
-        items.add(new ConfigurableMenuItem(11,
+        items.add(new DefaultConfigurableMenuItem(11,
                 ItemBuilder.newBuilder(Material.STAINED_CLAY)
                         .withData((short) 14)
                         .withName(ChatColor.RED + "Reject Order")
@@ -37,7 +37,7 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
                         .build(),
                 "reject-order"));
 
-        items.add(new ConfigurableMenuItem(15,
+        items.add(new DefaultConfigurableMenuItem(15,
                 ItemBuilder.newBuilder(Material.STAINED_CLAY)
                         .withData((short) 5)
                         .withName(ChatColor.GREEN + "Confirm Order")
@@ -47,13 +47,13 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
                         .build(),
                 "confirm-order"));
 
-        items.add(new ConfigurableMenuItem(30,
+        items.add(new DefaultConfigurableMenuItem(30,
                 ItemBuilder.newBuilder(Material.ARROW)
                         .withName(ChatColor.GREEN + "Go Back")
                         .appendLore(ChatColor.GRAY + "To Bazaar")
                         .build(),
                 "back"));
-        items.add(new ConfigurableMenuItem(31,
+        items.add(new DefaultConfigurableMenuItem(31,
                 ItemBuilder.newBuilder(Material.BARRIER)
                         .withName(ChatColor.RED + "Close")
                         .build(),
@@ -70,7 +70,7 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
     public static ConfirmationMenuConfiguration deserialize(Map<String, Object> args) {
         return new ConfirmationMenuConfiguration((String) args.get("name"),
                 (Integer) args.get("rows"),
-                (List<ConfigurableMenuItem>) args.get("items"),
+                (List<DefaultConfigurableMenuItem>) args.get("items"),
                 (int) args.get("slot"));
     }
 
@@ -83,14 +83,14 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
         return args;
     }
 
-    public GUI getMenu(BazaarOrder order) {
+    public GUI getMenu(BazaarOrder order, boolean edit) {
         Product product = order.getProduct();
         BazaarAPI bazaarApi = product.getProductCategory().getCategory().getBazaar().getBazaarApi();
 
         return getMenuBuilder()
                 .title(name.replace("%product%", product.getName()))
                 .prepare((gui, player) -> {
-                    super.loadItems(gui, bazaarApi, player, order);
+                    super.loadItems(gui, bazaarApi, player, order, edit);
 
                     gui.setElement(productSlot, Component.element()
                             .click(clickInfo -> {

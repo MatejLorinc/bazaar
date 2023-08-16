@@ -2,7 +2,7 @@ package me.math3w.bazaar.menu.configurations;
 
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
-import me.math3w.bazaar.menu.ConfigurableMenuItem;
+import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.zort.containr.Component;
 import me.zort.containr.GUI;
@@ -17,16 +17,16 @@ import java.util.Map;
 public class ProductMenuConfiguration extends MenuConfiguration {
     private final int productSlot;
 
-    public ProductMenuConfiguration(String name, int rows, List<ConfigurableMenuItem> items, int productSlot) {
+    public ProductMenuConfiguration(String name, int rows, List<DefaultConfigurableMenuItem> items, int productSlot) {
         super(name, rows, items);
         this.productSlot = productSlot;
     }
 
 
     public static ProductMenuConfiguration createDefaultProductConfiguration() {
-        List<ConfigurableMenuItem> items = new ArrayList<>();
+        List<DefaultConfigurableMenuItem> items = new ArrayList<>();
 
-        items.add(new ConfigurableMenuItem(10,
+        items.add(new DefaultConfigurableMenuItem(10,
                 ItemBuilder.newBuilder(Material.GOLD_BARDING)
                         .withName(ChatColor.GREEN + "Buy Instantly")
                         .appendLore("%product%")
@@ -36,7 +36,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                         .appendLore(ChatColor.YELLOW + "Click to pick amount!")
                         .build(),
                 "buy-instantly"));
-        items.add(new ConfigurableMenuItem(11,
+        items.add(new DefaultConfigurableMenuItem(11,
                 ItemBuilder.newBuilder(Material.HOPPER)
                         .withName(ChatColor.GOLD + "Sell Instantly")
                         .appendLore("%product%")
@@ -48,7 +48,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                         .build(),
                 "sell-instantly"));
 
-        items.add(new ConfigurableMenuItem(15,
+        items.add(new DefaultConfigurableMenuItem(15,
                 ItemBuilder.newBuilder(Material.MAP)
                         .withName(ChatColor.GREEN + "Create Buy Order")
                         .appendLore("%product%")
@@ -59,7 +59,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                         .appendLore(ChatColor.YELLOW + "Click to setup Buy Order!")
                         .build(),
                 "buy-order"));
-        items.add(new ConfigurableMenuItem(16,
+        items.add(new DefaultConfigurableMenuItem(16,
                 ItemBuilder.newBuilder(Material.EMPTY_MAP)
                         .withName(ChatColor.GOLD + "Create Sell Offer")
                         .appendLore("%product%")
@@ -71,18 +71,18 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                         .build(),
                 "sell-offer"));
 
-        items.add(new ConfigurableMenuItem(30,
+        items.add(new DefaultConfigurableMenuItem(30,
                 ItemBuilder.newBuilder(Material.ARROW)
                         .withName(ChatColor.GREEN + "Go Back")
                         .appendLore(ChatColor.GRAY + "To Bazaar")
                         .build(),
                 "back"));
-        items.add(new ConfigurableMenuItem(31,
+        items.add(new DefaultConfigurableMenuItem(31,
                 ItemBuilder.newBuilder(Material.BARRIER)
                         .withName(ChatColor.RED + "Close")
                         .build(),
                 "close"));
-        items.add(new ConfigurableMenuItem(32,
+        items.add(new DefaultConfigurableMenuItem(32,
                 ItemBuilder.newBuilder(Material.BOOK)
                         .withName(ChatColor.GREEN + "Manage Orders")
                         .appendLore(ChatColor.GRAY + "You don't have any ongoing")
@@ -102,7 +102,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
     public static ProductMenuConfiguration deserialize(Map<String, Object> args) {
         return new ProductMenuConfiguration((String) args.get("name"),
                 (Integer) args.get("rows"),
-                (List<ConfigurableMenuItem>) args.get("items"),
+                (List<DefaultConfigurableMenuItem>) args.get("items"),
                 (int) args.get("slot"));
     }
 
@@ -115,13 +115,13 @@ public class ProductMenuConfiguration extends MenuConfiguration {
         return args;
     }
 
-    public GUI getMenu(Product product) {
+    public GUI getMenu(Product product, boolean edit) {
         BazaarAPI bazaarApi = product.getProductCategory().getCategory().getBazaar().getBazaarApi();
 
         return getMenuBuilder()
                 .title(name.replace("%product%", product.getName()))
                 .prepare((gui, player) -> {
-                    super.loadItems(gui, bazaarApi, player, product);
+                    super.loadItems(gui, bazaarApi, player, product, edit);
 
                     gui.setElement(productSlot, Component.element()
                             .click(element -> {

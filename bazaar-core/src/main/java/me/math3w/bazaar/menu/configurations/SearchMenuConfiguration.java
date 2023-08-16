@@ -4,7 +4,7 @@ import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
 import me.math3w.bazaar.api.bazaar.Product;
-import me.math3w.bazaar.menu.ConfigurableMenuItem;
+import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
 import me.math3w.bazaar.utils.MenuUtils;
 import me.zort.containr.Component;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchMenuConfiguration extends MenuConfiguration {
-    public SearchMenuConfiguration(String name, int rows, List<ConfigurableMenuItem> items) {
+    public SearchMenuConfiguration(String name, int rows, List<DefaultConfigurableMenuItem> items) {
         super(name, rows, items);
     }
 
@@ -27,14 +27,14 @@ public class SearchMenuConfiguration extends MenuConfiguration {
     public static SearchMenuConfiguration deserialize(Map<String, Object> args) {
         return new SearchMenuConfiguration((String) args.get("name"),
                 (Integer) args.get("rows"),
-                (List<ConfigurableMenuItem>) args.get("items"));
+                (List<DefaultConfigurableMenuItem>) args.get("items"));
     }
 
-    public GUI getMenu(Bazaar bazaar, String filter) {
+    public GUI getMenu(Bazaar bazaar, String filter, boolean edit) {
         BazaarAPI bazaarApi = bazaar.getBazaarApi();
 
         return getMenuBuilder().prepare((gui, player) -> {
-            super.loadItems(gui, bazaarApi, player, null);
+            super.loadItems(gui, bazaarApi, player, null, edit);
 
             gui.setContainer(0, Component.staticContainer()
                     .size(1, 5)
@@ -64,7 +64,7 @@ public class SearchMenuConfiguration extends MenuConfiguration {
                     .build();
 
             gui.setContainer(11, productCategoriesContainer);
-            MenuUtils.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player, 48, 51);
+            MenuUtils.setPagingArrows(this, gui, productCategoriesContainer, bazaarApi, player, 48, 51, edit);
         }).build();
     }
 

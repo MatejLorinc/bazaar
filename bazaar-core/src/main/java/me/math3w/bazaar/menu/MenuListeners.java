@@ -70,12 +70,19 @@ public class MenuListeners implements Listener {
 
         if (!GUIRepository.hasOpen(player)) return;
 
-        event.setCancelled(true);
+        //Allow player to drag item into edit menu
+        if (!isEditMenu(event.getInventory())) {
+            event.setCancelled(true);
+        }
 
         if (item == null || item.getType() != Material.AIR) return;
 
         GUI gui = GUIRepository.OPENED_GUIS.get(playerName);
         gui.setFrozen(true);
         Bukkit.getScheduler().runTaskLater(plugin, () -> gui.setFrozen(false), 1);
+    }
+
+    private boolean isEditMenu(Inventory inventory) {
+        return inventory.getTitle().startsWith("Edit");
     }
 }
