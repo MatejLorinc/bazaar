@@ -108,14 +108,14 @@ public class DefaultClickActionManager implements ClickActionManager {
         });
 
 
-        addClickAction("buy-order", menuInfo -> clickInfo -> {
+        addEditClickAction("buy-order", (configurableMenuItem, menuInfo) -> clickInfo -> {
             if (!(menuInfo instanceof Product)) return;
             Product product = (Product) menuInfo;
 
             BazaarOrder order = bazaarPlugin.getOrderManager().prepareBazaarOrder(product, 0, 0, OrderType.BUY, clickInfo.getPlayer().getUniqueId());
             bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.BUY).getMenu(order, true).open(clickInfo.getPlayer());
         });
-        addClickAction("sell-offer", menuInfo -> clickInfo -> {
+        addEditClickAction("sell-offer", (configurableMenuItem, menuInfo) -> clickInfo -> {
             if (!(menuInfo instanceof Product)) return;
             Product product = (Product) menuInfo;
 
@@ -142,14 +142,16 @@ public class DefaultClickActionManager implements ClickActionManager {
     @Override
     public Consumer<ContextClickInfo> getClickAction(ConfigurableMenuItem configurableMenuItem, MenuInfo menuInfo, boolean editing) {
         if (editing) {
-            return editActions.getOrDefault(configurableMenuItem.getAction(), (configurableMenuItem1, menuInfo1) -> clickInfo -> {
+            return clickInfo -> {
                 if (!clickInfo.getClickType().isRightClick()) {
                     getClickAction(configurableMenuItem, menuInfo, false).accept(clickInfo);
                     return;
                 }
 
-                bazaarPlugin.getEditManager().openItemEdit(clickInfo.getPlayer(), configurableMenuItem);
-            }).apply(configurableMenuItem, menuInfo);
+                editActions.getOrDefault(configurableMenuItem.getAction(),
+                                (configurableMenuItem1, menuInfo1) -> clickInfo1 -> bazaarPlugin.getEditManager().openItemEdit(clickInfo.getPlayer(), configurableMenuItem))
+                        .apply(configurableMenuItem, menuInfo).accept(clickInfo);
+            };
         }
         return clickActions.getOrDefault(configurableMenuItem.getAction(), menuInfo1 -> clickInfo -> {
         }).apply(menuInfo);
