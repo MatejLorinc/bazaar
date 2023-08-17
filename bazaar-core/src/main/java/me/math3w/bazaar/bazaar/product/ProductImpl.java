@@ -129,13 +129,13 @@ public class ProductImpl implements Product {
     }
 
     private CompletableFuture<Pair<Double, Integer>> getPriceWithOrderableAmount(OrderType orderType, int amount) {
-        return getBazaarApi().getOrderManager().getOrders(this, orderType, orders -> orders.stream().map(BazaarOrder::getAmount).count() < amount)
+        return getBazaarApi().getOrderManager().getOrders(this, orderType, orders -> orders.stream().map(BazaarOrder::getOrderableItems).count() < amount)
                 .thenApply(orders -> {
                     double price = 0;
                     int itemAmount = 0;
                     for (BazaarOrder order : orders) {
-                        price += order.getUnitPrice() * order.getAmount();
-                        itemAmount += order.getAmount();
+                        price += order.getUnitPrice() * order.getOrderableItems();
+                        itemAmount += order.getOrderableItems();
                     }
                     return new Pair<>(price, Math.min(itemAmount, amount));
                 });

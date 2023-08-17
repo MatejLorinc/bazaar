@@ -3,6 +3,8 @@ package me.math3w.bazaar.bazaar.orders.submit;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.InstantBazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.InstantSubmitResult;
 import me.math3w.bazaar.api.bazaar.orders.SubmitResult;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -12,8 +14,23 @@ import org.bukkit.inventory.ItemStack;
 
 public class SellOrderService implements OrderService {
     @Override
-    public SubmitResult submit(BazaarOrder order) {
+    public InstantSubmitResult submit(InstantBazaarOrder order) {
+        Product product = order.getProduct();
+        Bazaar bazaar = product.getProductCategory().getCategory().getBazaar();
+        Player player = Bukkit.getPlayer(order.getPlayer());
 
+        int playerAmount = bazaar.getProductAmountInInventory(product, player);
+        if (playerAmount < order.getRealAmount()) {
+            return InstantSubmitResult.NOT_ENOUGH;
+        }
+
+        takeItems(player, product.getItem(), order.getRealAmount());
+        claim(order);
+        return InstantSubmitResult.SUCCESS;
+    }
+
+    @Override
+    public SubmitResult submit(BazaarOrder order) {
         Product product = order.getProduct();
         Bazaar bazaar = product.getProductCategory().getCategory().getBazaar();
         Player player = Bukkit.getPlayer(order.getPlayer());
@@ -62,5 +79,14 @@ public class SellOrderService implements OrderService {
         economy.depositPlayer(player, availableCoins);
 
         return order.getAvailableItems();
+    }
+
+    @Override
+    public int claim(InstantBazaarOrder order) {
+        Player player = Bukkit.getPlayer(order.getPlayer());
+        Economy economy = order.getProduct().getProductCategory().getCategory().getBazaar().getBazaarApi().getEconomy();
+        double coins = order.getPrice();
+        economy.depositPlayer(player, coins);
+        return order.getRealAmount();
     }
 }

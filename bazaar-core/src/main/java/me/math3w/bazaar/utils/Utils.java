@@ -1,5 +1,6 @@
 package me.math3w.bazaar.utils;
 
+import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class Utils {
     private Utils() {
@@ -39,5 +41,36 @@ public class Utils {
         TextComponent component = new TextComponent(text);
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + command));
         return component;
+    }
+
+    public static double getTotalPrice(List<BazaarOrder> orders, int amount) {
+        double price = 0;
+        for (int i = 0; i < orders.size(); i++) {
+            BazaarOrder order = orders.get(i);
+
+            if (i == orders.size() - 1) {
+                price += order.getUnitPrice() * getLastOrderFillAmount(orders, amount);
+                break;
+            }
+
+            price += order.getUnitPrice() * order.getOrderableItems();
+        }
+
+        return price;
+    }
+
+    public static int getLastOrderFillAmount(List<BazaarOrder> orders, int amount) {
+        int currentAmount = 0;
+        for (int i = 0; i < orders.size(); i++) {
+            BazaarOrder order = orders.get(i);
+
+            if (i == orders.size() - 1) {
+                return Math.min(amount - currentAmount, order.getOrderableItems());
+            }
+
+            currentAmount += order.getOrderableItems();
+        }
+
+        return orders.get(orders.size() - 1).getOrderableItems();
     }
 }

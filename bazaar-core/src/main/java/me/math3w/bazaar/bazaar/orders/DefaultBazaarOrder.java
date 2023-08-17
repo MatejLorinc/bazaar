@@ -127,6 +127,11 @@ public class DefaultBazaarOrder implements BazaarOrder {
     }
 
     @Override
+    public int getOrderableItems() {
+        return amount - filled;
+    }
+
+    @Override
     public int getAvailableItems() {
         return filled - claimed;
     }

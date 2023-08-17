@@ -39,7 +39,7 @@ public class DefaultCompressedBazaarOrder implements CompressedBazaarOrder {
 
     @Override
     public int getAmount() {
-        return orders.stream().mapToInt(BazaarOrder::getAmount).sum();
+        return orders.stream().mapToInt(BazaarOrder::getOrderableItems).sum();
     }
 
     @Override

@@ -45,7 +45,9 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
         addDefault("sell-inventory-none", Arrays.asList("&cYou don't have anything to", "&csell!"));
         addDefault("item", Collections.singletonList(" &a%item-amount%&7x &f%item-name% &7for &6%item-coins% coins"));
         addDefault("buy-instantly", Arrays.asList("&7Price per unit: &6%buy-price% &6coins", "&7Approx Stack price: &6%stack-buy-price% &6coins"));
+        addDefault("buy-instantly-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to buy instantly"));
         addDefault("sell-instantly", Arrays.asList("&7Inventory: &a%item-amount% items", "", "&7Amount: &a%item-amount%&7x", "&7Total: &6%coins% &6coins"));
+        addDefault("sell-instantly-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to sell instantly"));
         addDefault("buy-order", Collections.singletonList("&8- &6%coins% coins&7 each | &a%amount%&7x in &f%orders% &7orders"));
         addDefault("buy-order-none", Collections.singletonList("&cThere are no orders"));
         addDefault("buy-order-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to order"));
@@ -55,6 +57,7 @@ public class DefaultMenuConfig extends CustomConfig implements MenuConfig {
         addDefault("sell-offer-amount-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter amount", "to sell"));
         addDefault("sell-offer-price-sign", Arrays.asList("", "^^^^^^^^^^^^^^^", "Enter price", "per unit"));
         addDefault("confirm-lore", Arrays.asList("", "&7Price per unit: &6%unit-price% coins", "", "&7Order: &a%amount%&7x &f%product%", "&7Total price: &6%total-price% coins"));
+        addDefault("confirm-instant-lore", Arrays.asList("", "&7Amount: &a%amount%&7x", "&7Price: &6%price% coins"));
         addDefault("order.buy.lore", Arrays.asList("&8Worth %total-coins% coins", "", "&7Order amount: &a%amount%&7x", "&7Filled: &a%filled%&7/%amount% &a&l%percent%%!", "", "&7Price per unit: &6%coins% coins", "", "&aYou have &2%available% items &ato claim", "", "&eClick to claim"));
         addDefault("order.buy.prefix", "&a&lBUY ");
         addDefault("order.sell.lore", Arrays.asList("&8Worth %total-coins% coins", "", "&7Offer amount: &a%amount%&7x", "&7Filled: &6%filled%&7/%amount% &6&l%percent%%!", "", "&7Price per unit: &6%coins% coins", "", "&eYou have &6%available-coins% coins &eto claim", "", "&eClick to claim"));

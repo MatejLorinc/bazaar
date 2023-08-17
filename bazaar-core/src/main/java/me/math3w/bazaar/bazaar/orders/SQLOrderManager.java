@@ -146,4 +146,30 @@ public class SQLOrderManager extends AbstractOrderManager {
             }
         });
     }
+
+    @Override
+    protected CompletableFuture<Void> registerOrderFill(BazaarOrder order, int orderFillAmount) {
+        return CompletableFuture.runAsync(() -> {
+            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("UPDATE orders SET filled=? WHERE id=?")) {
+                statement.setInt(1, order.getFilled() + orderFillAmount);
+                statement.setInt(2, order.getDatabaseId());
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> undoOrderFill(BazaarOrder previousOrder) {
+        return CompletableFuture.runAsync(() -> {
+            try (PreparedStatement statement = sqlDatabase.getConnection().prepareStatement("UPDATE orders SET filled=? WHERE id=?")) {
+                statement.setInt(1, previousOrder.getFilled());
+                statement.setInt(2, previousOrder.getDatabaseId());
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }

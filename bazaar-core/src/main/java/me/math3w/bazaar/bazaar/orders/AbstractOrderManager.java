@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractOrderManager implements OrderManager {
     protected final BazaarPlugin bazaarPlugin;
@@ -33,6 +34,15 @@ public abstract class AbstractOrderManager implements OrderManager {
     @Override
     public BazaarOrder prepareBazaarOrder(Product product, int amount, double unitPrice, OrderType type, UUID player) {
         return new DefaultBazaarOrder(product, amount, BigDecimal.valueOf(unitPrice).setScale(1, RoundingMode.DOWN).doubleValue(), type, player, 0, 0, Instant.now());
+    }
+
+    @Override
+    public CompletableFuture<InstantBazaarOrder> prepareInstantOrder(Product product, int amount, OrderType type, UUID player) {
+        AtomicInteger amountInOrders = new AtomicInteger();
+        return getOrders(product, type == OrderType.BUY ? OrderType.SELL : OrderType.BUY, orders -> {
+            amountInOrders.addAndGet(orders.get(orders.size() - 1).getOrderableItems());
+            return amountInOrders.get() < amount;
+        }).thenApply(orders -> new DefaultInstantBazaarOrder(product, Math.min(amountInOrders.get(), amount), type, player, Utils.getTotalPrice(orders, amount)));
     }
 
     @Override
@@ -74,6 +84,43 @@ public abstract class AbstractOrderManager implements OrderManager {
         return registerBazaarOrder(order);
     }
 
+    @Override
+    public CompletableFuture<InstantSubmitResult> submitInstantOrder(InstantBazaarOrder order) {
+        Player player = Bukkit.getPlayer(order.getPlayer());
+        OrderType type = order.getType();
+        OrderService orderService = getOrderService(type);
+
+        return fillOrders(order.getProduct(), type == OrderType.BUY ? OrderType.SELL : OrderType.BUY, order.getAmount()).thenApplyAsync(fillResult -> {
+            int amount = fillResult.getAmount();
+            double price = fillResult.getPrice();
+
+            if (amount < order.getAmount()) {
+                bazaarPlugin.getMessagesConfig().sendMessage(player, InstantSubmitResult.NOT_ENOUGH_STOCK.getMessageId(type));
+                fillResult.undoFill();
+                return InstantSubmitResult.NOT_ENOUGH_STOCK;
+            }
+
+            CompletableFuture<InstantSubmitResult> resultCompletableFuture = new CompletableFuture<>();
+
+            order.setRealAmount(amount);
+            order.setRealPrice(price);
+            Bukkit.getScheduler().runTask(bazaarPlugin, () -> {
+                InstantSubmitResult result = orderService.submit(order);
+                bazaarPlugin.getMessagesConfig().sendMessage(player,
+                        result.getMessageId(type),
+                        new MessagePlaceholder("amount", String.valueOf(order.getRealAmount())),
+                        new MessagePlaceholder("product", order.getProduct().getName()),
+                        new MessagePlaceholder("coins", Utils.getTextPrice(order.getRealPrice())));
+                if (result != InstantSubmitResult.SUCCESS) {
+                    fillResult.undoFill();
+                }
+                resultCompletableFuture.complete(result);
+            });
+
+            return resultCompletableFuture.join();
+        });
+    }
+
     protected abstract CompletableFuture<SubmitResult> registerBazaarOrder(BazaarOrder order);
 
     protected abstract CompletableFuture<Void> registerClaim(BazaarOrder order, int claimed);
@@ -110,4 +157,30 @@ public abstract class AbstractOrderManager implements OrderManager {
             return compressedOrders;
         });
     }
+
+    @Override
+    public CompletableFuture<FillResult> fillOrders(Product product, OrderType orderType, int amount) {
+        AtomicInteger currentAmount = new AtomicInteger();
+
+        return getOrders(product, orderType, orders -> currentAmount.addAndGet(orders.get(orders.size() - 1).getOrderableItems()) < amount)
+                .thenApply(orders -> {
+                    double price = Utils.getTotalPrice(orders, amount);
+
+                    int remainingAmount = amount;
+                    for (int i = 0; i < orders.size(); i++) {
+                        if (remainingAmount <= 0) break;
+
+                        BazaarOrder order = orders.get(i);
+                        int orderFillAmount = Math.min(remainingAmount, order.getOrderableItems());
+
+                        registerOrderFill(order, orderFillAmount).join();
+
+                        remainingAmount -= orderFillAmount;
+                    }
+
+                    return new DefaultFillResult(this, orders, Math.min(currentAmount.get(), amount), price);
+                });
+    }
+
+    protected abstract CompletableFuture<Void> registerOrderFill(BazaarOrder order, int orderFillAmount);
 }

@@ -4,6 +4,7 @@ import de.rapha149.signgui.SignGUI;
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.InstantBazaarOrder;
 import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.api.menu.ClickActionManager;
 import me.math3w.bazaar.api.menu.ConfigurableMenuItem;
@@ -70,16 +71,61 @@ public class DefaultClickActionManager implements ClickActionManager {
             }, Integer::parseInt);
         });
 
-        addClickAction("reject-order", clickInfo -> {
-            bazaarPlugin.getMessagesConfig().sendMessage(clickInfo.getPlayer(), "order.reject");
-            clickInfo.close();
+        addClickAction("buy-instantly", menuInfo -> clickInfo -> {
+            if (!(menuInfo instanceof Product)) return;
+            Product product = (Product) menuInfo;
+
+            requireNumberFromPlayer(clickInfo.getPlayer(), "buy-instantly-amount-sign", amount -> {
+                bazaarPlugin.getOrderManager().prepareInstantOrder(product, amount, OrderType.BUY, clickInfo.getPlayer().getUniqueId()).thenAccept(order -> {
+                    bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.BUY).getInstantMenu(order, false).open(clickInfo.getPlayer());
+                });
+            }, Integer::parseInt);
+        });
+
+        addClickAction("sell-instantly", menuInfo -> clickInfo -> {
+            if (!(menuInfo instanceof Product)) return;
+            Product product = (Product) menuInfo;
+
+            if (clickInfo.getClickType().isRightClick()) {
+                requireNumberFromPlayer(clickInfo.getPlayer(), "sell-instantly-amount-sign", amount -> {
+                    bazaarPlugin.getOrderManager().prepareInstantOrder(product, amount, OrderType.SELL, clickInfo.getPlayer().getUniqueId()).thenAccept(order -> {
+                        bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.SELL).getInstantMenu(order, false).open(clickInfo.getPlayer());
+                    });
+                }, Integer::parseInt);
+                return;
+            }
+
+            int amount = bazaarPlugin.getBazaar().getProductAmountInInventory(product, clickInfo.getPlayer());
+            bazaarPlugin.getOrderManager().prepareInstantOrder(product, amount, OrderType.SELL, clickInfo.getPlayer().getUniqueId()).thenAccept(order -> {
+                bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.SELL).getInstantMenu(order, false).open(clickInfo.getPlayer());
+            });
+        });
+
+        addClickAction("reject-order", menuInfo -> clickInfo -> {
+            if (menuInfo instanceof BazaarOrder) {
+                bazaarPlugin.getMessagesConfig().sendMessage(clickInfo.getPlayer(), "order.reject");
+                clickInfo.close();
+                return;
+            }
+
+            if (menuInfo instanceof InstantBazaarOrder) {
+                bazaarPlugin.getMessagesConfig().sendMessage(clickInfo.getPlayer(), "instant.reject");
+                clickInfo.close();
+            }
         });
 
         addClickAction("confirm-order", menuInfo -> clickInfo -> {
-            if (!(menuInfo instanceof BazaarOrder)) return;
-            BazaarOrder order = (BazaarOrder) menuInfo;
-            bazaarPlugin.getOrderManager().submitBazaarOrder(order);
-            clickInfo.close();
+            if (menuInfo instanceof BazaarOrder) {
+                BazaarOrder order = (BazaarOrder) menuInfo;
+                bazaarPlugin.getOrderManager().submitBazaarOrder(order);
+                clickInfo.close();
+            }
+
+            if (menuInfo instanceof InstantBazaarOrder) {
+                InstantBazaarOrder order = (InstantBazaarOrder) menuInfo;
+                bazaarPlugin.getOrderManager().submitInstantOrder(order);
+                clickInfo.close();
+            }
         });
 
         addClickAction("manage-orders", clickInfo -> {
@@ -122,6 +168,25 @@ public class DefaultClickActionManager implements ClickActionManager {
             BazaarOrder order = bazaarPlugin.getOrderManager().prepareBazaarOrder(product, 0, 0, OrderType.SELL, clickInfo.getPlayer().getUniqueId());
             bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.SELL).getMenu(order, true).open(clickInfo.getPlayer());
         });
+
+
+        addEditClickAction("buy-instantly", (configurableMenuItem, menuInfo) -> clickInfo -> {
+            if (!(menuInfo instanceof Product)) return;
+            Product product = (Product) menuInfo;
+
+            bazaarPlugin.getOrderManager().prepareInstantOrder(product, 0, OrderType.BUY, clickInfo.getPlayer().getUniqueId()).thenAccept(order -> {
+                bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.BUY).getInstantMenu(order, true).open(clickInfo.getPlayer());
+            });
+        });
+
+        addEditClickAction("sell-instantly", (configurableMenuItem, menuInfo) -> clickInfo -> {
+            if (!(menuInfo instanceof Product)) return;
+            Product product = (Product) menuInfo;
+
+            bazaarPlugin.getOrderManager().prepareInstantOrder(product, 0, OrderType.SELL, clickInfo.getPlayer().getUniqueId()).thenAccept(order -> {
+                bazaarPlugin.getBazaarConfig().getConfirmationMenuConfiguration(OrderType.SELL).getInstantMenu(order, true).open(clickInfo.getPlayer());
+            });
+        });
     }
 
     @Override
@@ -143,13 +208,13 @@ public class DefaultClickActionManager implements ClickActionManager {
     public Consumer<ContextClickInfo> getClickAction(ConfigurableMenuItem configurableMenuItem, MenuInfo menuInfo, boolean editing) {
         if (editing) {
             return clickInfo -> {
-                if (!clickInfo.getClickType().isRightClick()) {
-                    getClickAction(configurableMenuItem, menuInfo, false).accept(clickInfo);
+                if (clickInfo.getClickType().isRightClick()) {
+                    bazaarPlugin.getEditManager().openItemEdit(clickInfo.getPlayer(), configurableMenuItem);
                     return;
                 }
 
                 editActions.getOrDefault(configurableMenuItem.getAction(),
-                                (configurableMenuItem1, menuInfo1) -> clickInfo1 -> bazaarPlugin.getEditManager().openItemEdit(clickInfo.getPlayer(), configurableMenuItem))
+                                (configurableMenuItem1, menuInfo1) -> getClickAction(configurableMenuItem, menuInfo, false))
                         .apply(configurableMenuItem, menuInfo).accept(clickInfo);
             };
         }
@@ -171,6 +236,14 @@ public class DefaultClickActionManager implements ClickActionManager {
                 .onFinish((signPlayer, lines) -> {
                     try {
                         T amount = parser.apply(lines[0]);
+                        
+                        if (amount.doubleValue() <= 0) {
+                            GUI lastGui = history.pop();
+                            bazaarPlugin.getMenuHistory().setHistory(player, history);
+                            lastGui.open(player);
+                            return null;
+                        }
+
                         Bukkit.getScheduler().runTaskLater(bazaarPlugin, () -> {
                             bazaarPlugin.getMenuHistory().setHistory(player, history);
                             callback.accept(amount);

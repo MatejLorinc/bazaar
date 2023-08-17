@@ -34,6 +34,8 @@ public interface BazaarOrder extends MenuInfo {
 
     double getAvailableCoins();
 
+    int getOrderableItems();
+
     int getAvailableItems();
 
     int getDatabaseId();

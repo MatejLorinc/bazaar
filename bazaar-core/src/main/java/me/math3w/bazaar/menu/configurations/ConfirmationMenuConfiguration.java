@@ -3,6 +3,7 @@ package me.math3w.bazaar.menu.configurations;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.InstantBazaarOrder;
 import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
 import me.math3w.bazaar.menu.MenuConfiguration;
@@ -98,6 +99,25 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
                                 clickInfo.close();
                             })
                             .item(product.getConfirmationIcon(order.getUnitPrice(), order.getAmount()))
+                            .build());
+                }).build();
+    }
+
+    public GUI getInstantMenu(InstantBazaarOrder order, boolean edit) {
+        Product product = order.getProduct();
+        BazaarAPI bazaarApi = product.getProductCategory().getCategory().getBazaar().getBazaarApi();
+
+        return getMenuBuilder()
+                .title(name.replace("%product%", product.getName()))
+                .prepare((gui, player) -> {
+                    super.loadItems(gui, bazaarApi, player, order, edit);
+
+                    gui.setElement(productSlot, Component.element()
+                            .click(clickInfo -> {
+                                bazaarApi.getOrderManager().submitInstantOrder(order);
+                                clickInfo.close();
+                            })
+                            .item(order.getIcon())
                             .build());
                 }).build();
     }

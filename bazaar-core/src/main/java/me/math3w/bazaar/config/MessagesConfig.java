@@ -37,5 +37,12 @@ public class MessagesConfig extends CustomConfig {
         addDefault("order.sell.not-enough", "&cYou don't have enough items for this sell offer &7[&6%amount%x %product% &7for &6%coins% coins&7]");
         addDefault("claim.buy", "&7Claimed &a%amount%&7x &f%product% &7worth &6%total-coins% coins &7bought for &6%unit-coins% &7each");
         addDefault("claim.sell", "&7Claimed &6%total-coins% coins &7from selling &a%amount%&7x &f%product% &7at &6%unit-coins% &7each");
+        addDefault("instant.reject", "&cThe instant order was rejected");
+        addDefault("instant.buy.success", "&7Bought &6%amount%x %product% &7for &6%coins% coins");
+        addDefault("instant.buy.not-enough", "&cYou don't have enough coins for this buy order &7[&6%amount%x %product% &7for &6%coins% coins&7]");
+        addDefault("instant.buy.not-enough-stock", "&cThere is not enough stock in the bazaar to fulfill your order");
+        addDefault("instant.sell.success", "&7Sold &6%amount%x %product% &7for &6%coins% coins");
+        addDefault("instant.sell.not-enough", "&cYou don't have enough items for this sell offer &7[&6%amount%x %product% &7for &6%coins% coins&7]");
+        addDefault("instant.sell.not-enough-stock", "&cThere is not enough stock in the bazaar to fulfill your order");
     }
 }

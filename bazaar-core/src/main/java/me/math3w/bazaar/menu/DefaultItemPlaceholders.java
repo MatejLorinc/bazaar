@@ -3,6 +3,7 @@ package me.math3w.bazaar.menu;
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
+import me.math3w.bazaar.api.bazaar.orders.InstantBazaarOrder;
 import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.api.config.MenuConfig;
 import me.math3w.bazaar.api.config.MessagePlaceholder;
@@ -89,12 +90,17 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
             if (info instanceof Product) {
                 Product product = (Product) info;
                 return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", product.getName()));
-            } else if (info instanceof BazaarOrder) {
+            }
+            if (info instanceof BazaarOrder) {
                 BazaarOrder order = (BazaarOrder) info;
                 return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", order.getProduct().getName()));
-            } else {
-                return item;
             }
+            if (info instanceof InstantBazaarOrder) {
+                InstantBazaarOrder order = (InstantBazaarOrder) info;
+                return menuConfig.replaceLorePlaceholders(item, "product", new MessagePlaceholder("product", order.getProduct().getName()));
+            }
+            return item;
+
         });
 
         addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
@@ -123,16 +129,17 @@ public class DefaultItemPlaceholders implements ItemPlaceholders {
         addItemPlaceholder((containerComponent, item, itemSlot, player, info) -> {
             if (!(info instanceof Product)) return item;
             Product product = (Product) info;
+            int productAmountInInventory = bazaarPlugin.getBazaar().getProductAmountInInventory(product, player);
             return menuConfig.replaceLorePlaceholders(item,
                     "sell-instantly",
-                    new MessagePlaceholder("item-amount", Utils.getTextPrice(bazaarPlugin.getBazaar().getProductAmountInInventory(product, player))),
+                    new MessagePlaceholder("item-amount", String.valueOf(productAmountInInventory)),
                     new LazyLorePlaceholder(bazaarPlugin,
                             containerComponent,
                             item,
                             itemSlot,
                             player,
                             "coins",
-                            product.getHighestSellPrice().thenApply(Utils::getTextPrice),
+                            bazaarPlugin.getOrderManager().prepareInstantOrder(product, productAmountInInventory, OrderType.SELL, player.getUniqueId()).thenApply(instantOrder -> Utils.getTextPrice(instantOrder.getPrice())),
                             menuConfig.getString("loading")));
         });
 
