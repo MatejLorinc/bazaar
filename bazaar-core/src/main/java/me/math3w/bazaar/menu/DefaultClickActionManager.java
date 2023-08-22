@@ -132,6 +132,18 @@ public class DefaultClickActionManager implements ClickActionManager {
             bazaarPlugin.getBazaar().openOrders(clickInfo.getPlayer());
         });
 
+        addClickAction("sell-inventory", menuInfo -> clickInfo -> {
+            Map<Product, Integer> productsInInventory = bazaarPlugin.getBazaar().getProductsInInventory(clickInfo.getPlayer());
+
+            for (Map.Entry<Product, Integer> productAmountEntry : productsInInventory.entrySet()) {
+                Product product = productAmountEntry.getKey();
+                int playerAmount = productAmountEntry.getValue();
+
+                bazaarPlugin.getOrderManager().prepareInstantOrder(product, playerAmount, OrderType.SELL, clickInfo.getPlayer().getUniqueId())
+                        .thenAccept(order -> bazaarPlugin.getOrderManager().submitInstantOrder(order));
+            }
+        });
+
         addClickAction("", clickInfo -> {
         });
     }

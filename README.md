@@ -15,4 +15,4 @@ bazaar, similar to stock exchange.
 ## Commands
 
 - `/bazaar` - Opens the bazaar to player | permission: `bazaar.open` (default: all)
-- `/bazaaredit` - Opens bazaar edit menu | | permission: `bazaar.edit` (default: op)
+- `/bazaaredit` - Opens bazaar edit menu | permission: `bazaar.edit` (default: op)
