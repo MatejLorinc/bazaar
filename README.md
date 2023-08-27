@@ -5,11 +5,33 @@ bazaar, similar to stock exchange.
 
 ## Features
 
-- In‑Game Customization
+- <details>
+  <summary>In‑Game Customization</summary>
+  <img alt="In‑Game Customization" width="640" src="https://i.imgur.com/J9VTlPO.gif">
+
+</details>
+
 - Cross-Server Synchronization without need of proxy plugin
-- Categories with pagination and Product Searching
-- Instant Buying / Instant Selling
-- Instant Inventory Sell
+
+
+- <details>
+  <summary>Categories with pagination and Product Searching</summary>
+  <img alt="Categories with pagination and Product Searching" width="640" src="https://i.imgur.com/Z0IM6at.gif">
+
+</details>
+
+- <details>
+  <summary>Instant Buying / Instant Selling</summary>
+  <img alt="Instant Buying / Instant Selling" width="640" src="https://i.imgur.com/sJ7WBsN.gif">
+
+</details>
+
+- <details>
+  <summary>Instant Inventory Sell</summary>
+  <img alt="Instant Inventory Sell" width="640" src="https://i.imgur.com/PvITyLl.gif">
+
+</details>
+
 - Different database types - MySQL / SQLite
 
 ## Commands
