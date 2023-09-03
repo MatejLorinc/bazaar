@@ -1,5 +1,6 @@
 package me.math3w.bazaar.edit;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.bazaar.Category;
@@ -61,7 +62,7 @@ public class DefaultEditManager implements EditManager {
                     category.setIcon(newItem);
                 })
                 .addElement(31, Component.element()
-                        .item(ItemBuilder.newBuilder(Material.BOOK_AND_QUILL)
+                        .item(ItemBuilder.newBuilder(XMaterial.WRITABLE_BOOK.parseMaterial())
                                 .withName(ChatColor.GREEN + "Edit Title")
                                 .appendLore(ChatColor.GRAY + "Current: " + ChatColor.RESET + category.getMenu().getTitle())
                                 .appendLore("")

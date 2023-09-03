@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.menu.MenuInfo;
@@ -8,7 +9,6 @@ import me.zort.containr.ContainerComponent;
 import me.zort.containr.builder.SimpleGUIBuilder;
 import me.zort.containr.internal.util.ItemBuilder;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +29,7 @@ public abstract class MenuConfiguration implements ConfigurationSerializable {
     }
 
     public static void fillWithGlass(int rows, List<DefaultConfigurableMenuItem> items) {
-        ItemStack glass = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 15).withName(ChatColor.WHITE.toString()).build();
+        ItemStack glass = ItemBuilder.newBuilder(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()).withName(ChatColor.WHITE.toString()).build();
         for (int i = 0; i < rows * 9; i++) {
             int finalI = i;
             if (items.stream().anyMatch(configurableMenuItem -> configurableMenuItem.getSlot() == finalI)) continue;

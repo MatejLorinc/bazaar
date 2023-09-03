@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu.configurations;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
 import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
@@ -26,7 +27,7 @@ public class OrdersMenuConfiguration extends MenuConfiguration {
 
         List<DefaultConfigurableMenuItem> items = new ArrayList<>();
         for (int glassSlot : glassSlots) {
-            items.add(new DefaultConfigurableMenuItem(glassSlot, ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 15).withName(ChatColor.WHITE.toString()).build(), ""));
+            items.add(new DefaultConfigurableMenuItem(glassSlot, ItemBuilder.newBuilder(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()).withName(ChatColor.WHITE.toString()).build(), ""));
         }
 
         items.add(new DefaultConfigurableMenuItem(30,

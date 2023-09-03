@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu.configurations;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.api.bazaar.orders.BazaarOrder;
@@ -29,8 +30,7 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
         List<DefaultConfigurableMenuItem> items = new ArrayList<>();
 
         items.add(new DefaultConfigurableMenuItem(11,
-                ItemBuilder.newBuilder(Material.STAINED_CLAY)
-                        .withData((short) 14)
+                ItemBuilder.newBuilder(XMaterial.matchXMaterial("STAINED_CLAY:14").get().parseItem())
                         .withName(ChatColor.RED + "Reject Order")
                         .appendLore("%product%")
                         .appendLore("")
@@ -39,8 +39,7 @@ public class ConfirmationMenuConfiguration extends MenuConfiguration {
                 "reject-order"));
 
         items.add(new DefaultConfigurableMenuItem(15,
-                ItemBuilder.newBuilder(Material.STAINED_CLAY)
-                        .withData((short) 5)
+                ItemBuilder.newBuilder(XMaterial.matchXMaterial("STAINED_CLAY:5").get().parseItem())
                         .withName(ChatColor.GREEN + "Confirm Order")
                         .appendLore("%product%")
                         .appendLore("")

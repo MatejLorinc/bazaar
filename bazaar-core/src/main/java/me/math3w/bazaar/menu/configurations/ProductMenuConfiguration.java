@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu.configurations;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Product;
 import me.math3w.bazaar.menu.DefaultConfigurableMenuItem;
@@ -27,7 +28,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
         List<DefaultConfigurableMenuItem> items = new ArrayList<>();
 
         items.add(new DefaultConfigurableMenuItem(10,
-                ItemBuilder.newBuilder(Material.GOLD_BARDING)
+                ItemBuilder.newBuilder(XMaterial.GOLDEN_HORSE_ARMOR.parseMaterial())
                         .withName(ChatColor.GREEN + "Buy Instantly")
                         .appendLore("%product%")
                         .appendLore("")
@@ -60,7 +61,7 @@ public class ProductMenuConfiguration extends MenuConfiguration {
                         .build(),
                 "buy-order"));
         items.add(new DefaultConfigurableMenuItem(16,
-                ItemBuilder.newBuilder(Material.EMPTY_MAP)
+                ItemBuilder.newBuilder(XMaterial.MAP.parseMaterial())
                         .withName(ChatColor.GOLD + "Create Sell Offer")
                         .appendLore("%product%")
                         .appendLore("")

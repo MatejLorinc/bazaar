@@ -1,5 +1,6 @@
 package me.math3w.bazaar.menu.configurations;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.BazaarPlugin;
 import me.math3w.bazaar.api.BazaarAPI;
 import me.math3w.bazaar.api.bazaar.Bazaar;
@@ -45,7 +46,7 @@ public class CategoryMenuConfiguration extends MenuConfiguration {
         }
 
         items.add(new DefaultConfigurableMenuItem(45,
-                ItemBuilder.newBuilder(Material.SIGN)
+                ItemBuilder.newBuilder(XMaterial.OAK_SIGN.parseMaterial())
                         .withName(ChatColor.GREEN + "Search")
                         .appendLore(ChatColor.GRAY + "Find products by name!")
                         .appendLore("")

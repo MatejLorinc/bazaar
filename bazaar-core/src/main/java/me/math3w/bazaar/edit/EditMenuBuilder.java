@@ -1,5 +1,6 @@
 package me.math3w.bazaar.edit;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.bazaar.Bazaar;
 import me.math3w.bazaar.api.menu.ConfigurableMenuItem;
 import me.math3w.bazaar.api.menu.MenuHistory;
@@ -24,7 +25,7 @@ public class EditMenuBuilder {
     private String title;
     private int rows = 5;
     private Map<Integer, Element> elements = new HashMap<>();
-    private ItemStack fillerItem = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE, (short) 15).withName(ChatColor.WHITE.toString()).build();
+    private ItemStack fillerItem = ItemBuilder.newBuilder(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()).withName(ChatColor.WHITE.toString()).build();
     private Consumer<Player> updateMenuPlayerConsumer;
 
     public EditMenuBuilder title(String title) {
@@ -34,11 +35,6 @@ public class EditMenuBuilder {
 
     public EditMenuBuilder rows(int rows) {
         this.rows = rows;
-        return this;
-    }
-
-    public EditMenuBuilder fillerGlassData(short data) {
-        this.fillerItem = ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE, data).withName(ChatColor.WHITE.toString()).build();
         return this;
     }
 
@@ -108,7 +104,7 @@ public class EditMenuBuilder {
 
     public EditMenuBuilder addLoreEditElement(MessageInputManager messageInputManager, int slot, List<String> lore, Consumer<List<String>> newLoreConsumer) {
         return addElement(slot, Component.element()
-                .item(ItemBuilder.newBuilder(Material.SIGN)
+                .item(ItemBuilder.newBuilder(XMaterial.OAK_SIGN.parseMaterial())
                         .withName(ChatColor.GREEN + "Edit Lore")
                         .appendLore(ChatColor.GRAY + "Current: ")
                         .appendLore(lore == null ? new ArrayList<>() : lore)
@@ -144,7 +140,7 @@ public class EditMenuBuilder {
                             .rows(2)
                             .prepare((gui, player) -> {
                                 for (String action : bazaar.getBazaarApi().getClickActionManager().getActions()) {
-                                    gui.appendElement(Component.element(ItemBuilder.newBuilder(Material.EMPTY_MAP)
+                                    gui.appendElement(Component.element(ItemBuilder.newBuilder(XMaterial.MAP.parseMaterial())
                                                     .withName(ChatColor.GREEN + (action.isEmpty() ? "none" : action))
                                                     .appendLore("")
                                                     .appendLore(ChatColor.YELLOW + "Click to set this action to item!").build())

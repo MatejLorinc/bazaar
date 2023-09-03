@@ -3,6 +3,7 @@ main: me.math3w.bazaar.BazaarPlugin
 version: 1.0
 author: _Math3w_
 description: Recreation of hypixel skyblock bazaar system
+api-version: 1.13
 depend:
   - Vault
 commands:

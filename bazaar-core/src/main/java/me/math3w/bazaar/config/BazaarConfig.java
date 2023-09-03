@@ -1,5 +1,6 @@
 package me.math3w.bazaar.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.math3w.bazaar.api.bazaar.orders.OrderType;
 import me.math3w.bazaar.bazaar.category.CategoryConfiguration;
 import me.math3w.bazaar.bazaar.product.ProductConfiguration;
@@ -29,14 +30,14 @@ public class BazaarConfig extends CustomConfig {
     private void addDefaultCategories() {
         ArrayList<CategoryConfiguration> categories = new ArrayList<>();
 
-        categories.add(createDefaultCategory(Material.GOLD_HOE, "&eFarming", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 4).build(), getDefaultFarmingProductCategories()));
-        categories.add(createDefaultCategory(Material.DIAMOND_PICKAXE, "&bMining", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 9).build(), getDefaultMiningProductCategories()));
-        categories.add(createDefaultCategory(Material.IRON_SWORD, "&cCombat", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 14).build(), getDefaultCombatProductCategories()));
-        categories.add(createDefaultCategory(Material.FISHING_ROD, "&6Woods & Fishes", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 1).build(), getDefaultWoodsFishesProductCategories()));
-        categories.add(createDefaultCategory(Material.ENCHANTMENT_TABLE, "&dOddities", ItemBuilder.newBuilder(Material.STAINED_GLASS_PANE).withData((short) 6).build(), getDefaultOdditiesProductCategories()));
+        categories.add(createDefaultCategory(XMaterial.GOLDEN_HOE.parseItem(), "&eFarming", XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem(), getDefaultFarmingProductCategories()));
+        categories.add(createDefaultCategory(Material.DIAMOND_PICKAXE, "&bMining", XMaterial.CYAN_STAINED_GLASS_PANE.parseItem(), getDefaultMiningProductCategories()));
+        categories.add(createDefaultCategory(Material.IRON_SWORD, "&cCombat", XMaterial.RED_STAINED_GLASS_PANE.parseItem(), getDefaultCombatProductCategories()));
+        categories.add(createDefaultCategory(Material.FISHING_ROD, "&6Woods & Fishes", XMaterial.ORANGE_STAINED_GLASS_PANE.parseItem(), getDefaultWoodsFishesProductCategories()));
+        categories.add(createDefaultCategory(XMaterial.ENCHANTING_TABLE.parseItem(), "&dOddities", XMaterial.PINK_STAINED_GLASS_PANE.parseItem(), getDefaultOdditiesProductCategories()));
 
         addDefault("categories", categories);
-        addDefault("search-menu", SearchMenuConfiguration.createDefaultConfiguration(ChatColor.GREEN + "Bazaar ➜ Search", new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)));
+        addDefault("search-menu", SearchMenuConfiguration.createDefaultConfiguration(ChatColor.GREEN + "Bazaar ➜ Search", XMaterial.LIME_STAINED_GLASS_PANE.parseItem()));
         addDefault("product-menu", ProductMenuConfiguration.createDefaultProductConfiguration());
         for (OrderType orderType : OrderType.values()) {
             addDefault("confirm-" + orderType.name().toLowerCase() + "-menu", ConfirmationMenuConfiguration.createDefaultConfirmationConfiguration(orderType));
@@ -44,7 +45,7 @@ public class BazaarConfig extends CustomConfig {
         addDefault("orders", OrdersMenuConfiguration.createDefaultConfiguration());
     }
 
-    private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
+    private CategoryConfiguration createDefaultCategory(ItemStack icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
         String colorizedName = Utils.colorize(name);
         return new CategoryConfiguration(getDefaultMenuConfiguration(colorizedName, glass),
                 ItemBuilder.newBuilder(icon)
@@ -55,6 +56,10 @@ public class BazaarConfig extends CustomConfig {
                 productCategories);
     }
 
+    private CategoryConfiguration createDefaultCategory(Material icon, String name, ItemStack glass, List<ProductCategoryConfiguration> productCategories) {
+        return createDefaultCategory(new ItemStack(icon), name, glass, productCategories);
+    }
+
     private CategoryMenuConfiguration getDefaultMenuConfiguration(String categoryName, ItemStack glass) {
         return CategoryMenuConfiguration.createDefaultConfiguration(ChatColor.getLastColors(categoryName) + "Bazaar ➜ " + categoryName, glass);
     }
@@ -63,16 +68,16 @@ public class BazaarConfig extends CustomConfig {
         return Arrays.asList(
                 getFarmingProductCategoryConfiguration(Material.WHEAT,
                         "Wheat & Seeds",
-                        getProductConfiguration(Material.SEEDS, "Seeds"),
+                        getProductConfiguration(XMaterial.WHEAT_SEEDS.parseItem(), "Seeds"),
                         getProductConfiguration(Material.WHEAT, "Wheat"),
                         getProductConfiguration(Material.BREAD, "Bread")),
-                getFarmingProductCategoryConfiguration(Material.CARROT_ITEM,
+                getFarmingProductCategoryConfiguration(XMaterial.CARROT.parseMaterial(),
                         "Carrot",
-                        getProductConfiguration(Material.CARROT_ITEM, "Carrot"),
+                        getProductConfiguration(XMaterial.CARROT.parseMaterial(), "Carrot"),
                         getProductConfiguration(Material.GOLDEN_CARROT, "Golden Carrot")),
-                getFarmingProductCategoryConfiguration(Material.POTATO_ITEM,
+                getFarmingProductCategoryConfiguration(XMaterial.POTATO.parseMaterial(),
                         "Potato",
-                        getProductConfiguration(Material.POTATO_ITEM, "Potato"),
+                        getProductConfiguration(XMaterial.POTATO.parseMaterial(), "Potato"),
                         getProductConfiguration(Material.BAKED_POTATO, "Baked Potato")),
                 getFarmingProductCategoryConfiguration(Material.PUMPKIN,
                         "Pumpkin",
@@ -80,19 +85,18 @@ public class BazaarConfig extends CustomConfig {
                         getProductConfiguration(Material.PUMPKIN_PIE, "Pumpkin Pie")),
                 getFarmingProductCategoryConfiguration(Material.MELON,
                         "Melon",
-                        getProductConfiguration(Material.MELON, "Melon"),
-                        getProductConfiguration(Material.MELON_BLOCK, "Melon Block")),
+                        getProductConfiguration(Material.MELON, "Melon")),
                 getFarmingProductCategoryConfiguration(Material.RED_MUSHROOM,
                         "Mushrooms",
                         getProductConfiguration(Material.RED_MUSHROOM, "Red Mushroom"),
                         getProductConfiguration(Material.BROWN_MUSHROOM, "Brown Mushroom")),
-                getFarmingProductCategoryConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 3),
+                getFarmingProductCategoryConfiguration(XMaterial.COCOA_BEANS.parseItem(),
                         "Cocoa Beans",
-                        getProductConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 3), "Cocoa Beans")),
+                        getProductConfiguration(XMaterial.COCOA_BEANS.parseItem(), "Cocoa Beans")),
                 getFarmingProductCategoryConfiguration(Material.CACTUS,
                         "Cactus",
                         getProductConfiguration(Material.CACTUS, "Cactus"),
-                        getProductConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 2), "Cactus Green")),
+                        getProductConfiguration(XMaterial.GREEN_DYE.parseItem(), "Cactus Green")),
                 getFarmingProductCategoryConfiguration(Material.SUGAR_CANE,
                         "Sugar Cane",
                         getProductConfiguration(Material.SUGAR_CANE, "Sugar Cane"),
@@ -100,15 +104,15 @@ public class BazaarConfig extends CustomConfig {
                 getFarmingProductCategoryConfiguration(Material.LEATHER,
                         "Leather & Beef",
                         getProductConfiguration(Material.LEATHER, "Leather"),
-                        getProductConfiguration(Material.RAW_BEEF, "Beef"),
+                        getProductConfiguration(XMaterial.BEEF.parseMaterial(), "Beef"),
                         getProductConfiguration(Material.COOKED_BEEF, "Steak")),
-                getFarmingProductCategoryConfiguration(Material.PORK,
+                getFarmingProductCategoryConfiguration(XMaterial.PORKCHOP.parseMaterial(),
                         "Pork",
-                        getProductConfiguration(Material.PORK, "Pork"),
-                        getProductConfiguration(Material.PORK, "Grilled Pork")),
-                getFarmingProductCategoryConfiguration(Material.RAW_CHICKEN,
+                        getProductConfiguration(XMaterial.PORKCHOP.parseMaterial(), "Pork"),
+                        getProductConfiguration(XMaterial.COOKED_PORKCHOP.parseMaterial(), "Grilled Pork")),
+                getFarmingProductCategoryConfiguration(XMaterial.CHICKEN.parseItem(),
                         "Chicken & Feather",
-                        getProductConfiguration(Material.RAW_CHICKEN, "Chicken"),
+                        getProductConfiguration(XMaterial.CHICKEN.parseMaterial(), "Chicken"),
                         getProductConfiguration(Material.COOKED_CHICKEN, "Cooked Chicken"),
                         getProductConfiguration(Material.FEATHER, "Feather"),
                         getProductConfiguration(Material.EGG, "Egg")),
@@ -116,10 +120,10 @@ public class BazaarConfig extends CustomConfig {
                         "Mutton & Wool",
                         getProductConfiguration(Material.MUTTON, "Mutton"),
                         getProductConfiguration(Material.COOKED_MUTTON, "Cooked Mutton"),
-                        getProductConfiguration(Material.WOOL, "Wool")),
-                getFarmingProductCategoryConfiguration(Material.NETHER_STALK,
+                        getProductConfiguration(XMaterial.WHITE_WOOL.parseMaterial(), "Wool")),
+                getFarmingProductCategoryConfiguration(XMaterial.NETHER_WART.parseItem(),
                         "Nether Warts",
-                        getProductConfiguration(Material.NETHER_STALK, "Nether Warts"))
+                        getProductConfiguration(XMaterial.NETHER_WART.parseMaterial(), "Nether Warts"))
         );
     }
 
@@ -148,8 +152,8 @@ public class BazaarConfig extends CustomConfig {
                 getMiningProductCategoryConfiguration(Material.DIAMOND, "Diamond",
                         getProductConfiguration(Material.DIAMOND, "Diamond"),
                         getProductConfiguration(Material.DIAMOND_BLOCK, "Diamond Block")),
-                getMiningProductCategoryConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 4), "Lapis",
-                        getProductConfiguration(new ItemStack(Material.INK_SACK, 1, (short) 4), "Lapis"),
+                getMiningProductCategoryConfiguration(XMaterial.LAPIS_LAZULI.parseItem(), "Lapis",
+                        getProductConfiguration(XMaterial.LAPIS_LAZULI.parseItem(), "Lapis"),
                         getProductConfiguration(Material.LAPIS_BLOCK, "Lapis Block")),
                 getMiningProductCategoryConfiguration(Material.EMERALD, "Emerald",
                         getProductConfiguration(Material.EMERALD, "Emerald"),
@@ -189,8 +193,8 @@ public class BazaarConfig extends CustomConfig {
                 getCombatProductCategoryConfiguration(Material.STRING, "String",
                         getProductConfiguration(Material.STRING, "String"),
                         getProductConfiguration(Material.SPIDER_EYE, "Spider Eye")),
-                getCombatProductCategoryConfiguration(Material.SULPHUR, "Gunpowder",
-                        getProductConfiguration(Material.SULPHUR, "Gunpowder")),
+                getCombatProductCategoryConfiguration(XMaterial.GUNPOWDER.parseMaterial(), "Gunpowder",
+                        getProductConfiguration(XMaterial.GUNPOWDER.parseMaterial(), "Gunpowder")),
                 getCombatProductCategoryConfiguration(Material.ENDER_PEARL, "Ender Pearl",
                         getProductConfiguration(Material.ENDER_PEARL, "Ender Pearl")),
                 getCombatProductCategoryConfiguration(Material.GHAST_TEAR, "Ghast Tear",
@@ -214,26 +218,26 @@ public class BazaarConfig extends CustomConfig {
 
     private List<ProductCategoryConfiguration> getDefaultWoodsFishesProductCategories() {
         return Arrays.asList(
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG), "Oak",
-                        getProductConfiguration(Material.LOG, "Oak Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG, 1, (short) 1), "Spruce",
-                        getProductConfiguration(new ItemStack(Material.LOG, 1, (short) 2), "Spruce Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG, 1, (short) 2), "Birch",
-                        getProductConfiguration(new ItemStack(Material.LOG, 1, (short) 2), "Birch Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG_2, 1, (short) 1), "Dark Oak",
-                        getProductConfiguration(new ItemStack(Material.LOG_2, 1, (short) 1), "Dark Oak Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG_2), "Acacia",
-                        getProductConfiguration(new ItemStack(Material.LOG_2), "Acacia Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.LOG, 1, (short) 3), "Jungle",
-                        getProductConfiguration(new ItemStack(Material.LOG, 1, (short) 3), "Jungle Wood")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.RAW_FISH), "Fish",
-                        getProductConfiguration(new ItemStack(Material.RAW_FISH, 1), "Raw Fish")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 1), "Salmon",
-                        getProductConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 1), "Raw Salmon")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 2), "Clownfish",
-                        getProductConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 2), "Clownfish")),
-                getWoodsFishesProductCategoryConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 3), "Pufferfish",
-                        getProductConfiguration(new ItemStack(Material.RAW_FISH, 1, (short) 3), "Pufferfish")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.OAK_LOG.parseItem(), "Oak",
+                        getProductConfiguration(XMaterial.OAK_LOG.parseItem(), "Oak Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.SPRUCE_LOG.parseItem(), "Spruce",
+                        getProductConfiguration(XMaterial.SPRUCE_LOG.parseItem(), "Spruce Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.BIRCH_LOG.parseItem(), "Birch",
+                        getProductConfiguration(XMaterial.BIRCH_LOG.parseItem(), "Birch Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.DARK_OAK_LOG.parseItem(), "Dark Oak",
+                        getProductConfiguration(XMaterial.DARK_OAK_LOG.parseItem(), "Dark Oak Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.ACACIA_LOG.parseItem(), "Acacia",
+                        getProductConfiguration(XMaterial.ACACIA_LOG.parseItem(), "Acacia Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.JUNGLE_LOG.parseItem(), "Jungle",
+                        getProductConfiguration(XMaterial.JUNGLE_LOG.parseItem(), "Jungle Wood")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.COD.parseItem(), "Fish",
+                        getProductConfiguration(XMaterial.COD.parseItem(), "Raw Fish")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.SALMON.parseItem(), "Salmon",
+                        getProductConfiguration(XMaterial.SALMON.parseItem(), "Raw Salmon")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.TROPICAL_FISH.parseItem(), "Clownfish",
+                        getProductConfiguration(XMaterial.TROPICAL_FISH.parseItem(), "Clownfish")),
+                getWoodsFishesProductCategoryConfiguration(XMaterial.PUFFERFISH.parseItem(), "Pufferfish",
+                        getProductConfiguration(XMaterial.PUFFERFISH.parseItem(), "Pufferfish")),
                 getWoodsFishesProductCategoryConfiguration(Material.PRISMARINE_SHARD, "Prismarine",
                         getProductConfiguration(Material.PRISMARINE_SHARD, "Prismarine Shard"),
                         getProductConfiguration(Material.PRISMARINE_CRYSTALS, "Prismarine Crystals")),
@@ -252,8 +256,8 @@ public class BazaarConfig extends CustomConfig {
 
     private List<ProductCategoryConfiguration> getDefaultOdditiesProductCategories() {
         return Arrays.asList(
-                getOdditiesProductCategoryConfiguration(Material.EXP_BOTTLE, "EXP Bottles",
-                        getProductConfiguration(Material.EXP_BOTTLE, "Experience Bottle"))
+                getOdditiesProductCategoryConfiguration(XMaterial.EXPERIENCE_BOTTLE.parseMaterial(), "EXP Bottles",
+                        getProductConfiguration(XMaterial.EXPERIENCE_BOTTLE.parseMaterial(), "Experience Bottle"))
         );
     }
 

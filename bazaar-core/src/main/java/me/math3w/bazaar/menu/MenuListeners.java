@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 public class MenuListeners implements Listener {
@@ -71,7 +72,7 @@ public class MenuListeners implements Listener {
         if (!GUIRepository.hasOpen(player)) return;
 
         //Allow player to drag item into edit menu
-        if (!isEditMenu(event.getInventory())) {
+        if (!isEditMenu(event.getView())) {
             event.setCancelled(true);
         }
 
@@ -82,7 +83,7 @@ public class MenuListeners implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> gui.setFrozen(false), 1);
     }
 
-    private boolean isEditMenu(Inventory inventory) {
+    private boolean isEditMenu(InventoryView inventory) {
         return inventory.getTitle().startsWith("Edit");
     }
 }
